@@ -4,7 +4,7 @@ This tool provides integration tests, written in Python, based on `selenium` and
 
 ## Prerequisites
 
-This tool requires the Docker Software Container Engine to be installed.
+This tool requires the Docker to be installed.
 
 ## How to build the Docker image
 
