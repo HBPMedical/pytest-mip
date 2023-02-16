@@ -1,10 +1,10 @@
-# pytest_mip: Pytest and Selenium -based integration tests of the up-and-running MIP federations
+# `pytest_mip`: Pytest and Selenium -based integration tests of the up-and-running MIP federations
 
-This tool provides integration tests, written in Python, based on `selenium` and `pytest` for testing the up-and-running MIP federations. For portability and easy deployment, the tests are encpsulated in a Docker software container.
+This open-source tool provides integration tests, written in Python, based on `selenium` and `pytest` for testing the up-and-running federations of the MIP. For portability and easy deployment, the tests are encapsulated in a Docker software container image.
 
 ## Prerequisites
 
-This tool requires the Docker to be installed.
+This tool is intended to be run using its Docker image and so Docker is required to be installed.
 
 ## How to build the Docker image
 
@@ -44,3 +44,4 @@ where `<fed_name>` designs a specific federation.
 
 Here is a list of `<fed_name>` / filename pairs for the different federations that are now available:
 * `qa` : `test_qa_federation.py`
+* ...
