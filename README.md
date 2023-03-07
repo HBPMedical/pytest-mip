@@ -37,11 +37,12 @@ Once `pytest_mip` is built, you can execute the tests for all federations as fol
 You can run the following command to test a specific federation:
 
    ```bash
-   $ docker run -t pytest_mip test_<fed_name>_federation.py
+   $ docker run -t pytest_mip test_<fed_name>.py
    ```
 
 where `<fed_name>` designs a specific federation.
 
 Here is a list of `<fed_name>` / filename pairs for the different federations that are now available:
-* `qa` : `test_qa_federation.py`
+* `qa_federation` : `test_qa_federation.py`
+* `public_mip` : `test_public_mip.py`
 * ...
