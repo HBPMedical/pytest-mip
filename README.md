@@ -1,5 +1,7 @@
 # `pytest_mip`: Pytest and Selenium -based integration tests of the up-and-running MIP federations
 
+[![MIP Federation Integration Tests Pipeline](https://github.com/HBPMedical/pytest-mip/actions/workflows/build-test-report.yml/badge.svg)](https://github.com/HBPMedical/pytest-mip/actions/workflows/build-test-report.yml)
+
 This open-source tool provides integration tests, written in Python, based on `selenium` and `pytest` for testing the up-and-running federations of the MIP. For portability and easy deployment, the tests are encapsulated in a Docker software container image.
 
 ## Prerequisites
