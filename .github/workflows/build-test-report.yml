@@ -43,7 +43,7 @@ jobs:
           name: pytest_mip
           path: /tmp/pytest_mip.tar
 
-  test:
+  test-report:
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -65,17 +65,13 @@ jobs:
         run: |
           mkdir -p report
           docker run -v $(pwd)/report:/app/report -t pytest_mip .
-  
-  deploy:
-     runs-on: ubuntu-latest
-     needs: test
-     steps:
-       - name: Deploy report to GitHub Page
-         uses: peaceiris/actions-gh-pages@v3
-         if: |
-           github.event_name == 'push' && github.ref == 'refs/heads/main'
-         with:
-           publish_branch: gh-pages
-           github_token: ${{ secrets.GITHUB_TOKEN }}
-           publish_dir: report
-           force_orphan: true
+      - 
+        name: Deploy report to GitHub Page
+        uses: peaceiris/actions-gh-pages@v3
+        if: |
+          github.event_name == 'push' && github.ref == 'refs/heads/main'
+        with:
+          publish_branch: gh-pages
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: report
+          force_orphan: true
