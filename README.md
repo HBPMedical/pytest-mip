@@ -2,13 +2,20 @@
 
 [![MIP Federation Integration Tests Pipeline](https://github.com/HBPMedical/pytest-mip/actions/workflows/build-test-report.yml/badge.svg)](https://github.com/HBPMedical/pytest-mip/actions/workflows/build-test-report.yml)
 
-This open-source tool provides integration tests, written in Python, based on `selenium` and `pytest` for testing the up-and-running federations of the MIP. For portability and easy deployment, the tests are encapsulated in a Docker software container image.
+This open-source tool is developed for testing and reporting the status of the up-and-running federations of the MIP. It provides integration tests, written in Python, based on `selenium`, `pytest`, and `pytest-html`, and encapsulated in a Docker software container image for easy deployment. The process of building the container image, running the tests, generating and deploying the report is fully automated through a [GitHub Action workflow](.github/workflows/build-test-report.yml) that is run periodically at 6:55am every day. Updated overall status of the tests is indicated by the badge above.
 
-## Prerequisites
+The report, deployed as a Github Page website can be viewed @ https://hbpmedical.github.io/pytest-mip/.
+
+
+## How to run `pytest_mip` locally
+
+### Installation instructions
+
+#### Prerequisites
 
 This tool is intended to be run using its Docker image and so Docker is required to be installed.
 
-## How to build the Docker image
+#### How to build the Docker image
 
 1. Clone the repository
 
@@ -24,9 +31,9 @@ This tool is intended to be run using its Docker image and so Docker is required
     $ docker build -t pytest_mip .
     ```
 
-## How to run the tests using the Docker image
+### How to run the tests using the Docker image
 
-### Test all MIP federations
+#### Test all MIP federations
 
 Once `pytest_mip` is built, you can execute the tests for all federations as follows:
 
@@ -38,7 +45,7 @@ Once `pytest_mip` is built, you can execute the tests for all federations as fol
    
    Once done, you can check the generated report by (1) going to the `/local/path/to/report` folder, and (2) opening the `ìndex.html` file in your favorite browser. 
 
-### Test a specific MIP federation
+#### Test a specific MIP federation
 
 You can run the following command to test a specific federation:
 
