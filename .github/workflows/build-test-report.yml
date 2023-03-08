@@ -5,9 +5,9 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-  # schedule:
-    # # Runs "at 6:55am every day" (see https://crontab.guru)
-    # - cron: '55 6 * * *'
+  schedule:
+    # Runs "at 6:55am every day" (see https://crontab.guru)
+    - cron: '55 6 * * *'
 
 jobs:
   build:
