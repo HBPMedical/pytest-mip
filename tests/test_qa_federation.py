@@ -48,7 +48,21 @@ def test_main(selenium_driver):
     login1 = selenium_driver.find_element(By.CSS_SELECTOR, "#kc-login")
     login1.click()
 
-    # 2. Click '×' if needed
+    # 8.1. Accept the terms if needed
+    try:
+        terms_checkbox = selenium_driver.find_element(
+            By.XPATH, "//div[@class='tos-form']//input[@type='checkbox']"
+        )
+        terms_accept = selenium_driver.find_element(
+            By.XPATH, "//div[@class='tos-form']//button[@type='submit']"
+        )
+        terms_checkbox.click()
+        terms_accept.click()
+    except Exception as e:
+        print(e)
+        pass
+
+    # 8.2. Click '×' if needed
     try:
         _ = selenium_driver.find_element(By.XPATH, "//span[. = '×']")
         _.click()
