@@ -50,13 +50,12 @@ def test_main(selenium_driver):
 
     # 8.1. Accept the terms if needed
     try:
-        terms_checkbox = selenium_driver.find_element(
-            By.XPATH, "//div[@class='tos-form']//input[@type='checkbox']"
-        )
-        terms_accept = selenium_driver.find_element(
-            By.XPATH, "//div[@class='tos-form']//button[@type='submit']"
-        )
+        terms_checkbox = selenium_driver.find_element(By.XPATH, "//input[@id='tos']")
         terms_checkbox.click()
+
+        terms_accept = selenium_driver.find_element(
+            By.XPATH, "//button[@type='submit']"
+        )
         terms_accept.click()
     except Exception as e:
         print(e)
