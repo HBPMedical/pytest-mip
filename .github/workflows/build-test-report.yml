@@ -23,8 +23,8 @@ jobs:
         name: Setup project parameters
         run: |
           cat << EOF > $(pwd)/tests/project_parameters.py
-          UserID = $EBRAINSUSERID
-          UserPWD = $BRAINSUSERPWD
+          UserID = "${{secrets.EBRAINSUSERID}}"
+          UserPWD = "${{secrets.EBRAINSUSERPWD}}"
           EOF
       -
         name: Build and push
