@@ -101,4 +101,4 @@ def pytest_html_results_table_row(report, cells):
 
 def pytest_html_report_title(report):
     """Set report title."""
-    report.title = "Tests of MIP Federations Report"
+    report.title = "Integration Tests of MIP Federations - Report"
