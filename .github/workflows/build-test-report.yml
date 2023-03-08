@@ -23,9 +23,12 @@ jobs:
         name: Setup project parameters
         run: |
           cat << EOF > $(pwd)/tests/project_parameters.py
-          UserID = "${{secrets.EBRAINSUSERID}}"
-          UserPWD = "${{secrets.EBRAINSUSERPWD}}"
+          UserID = "$EBRAINSUSERID"
+          UserPWD = "$EBRAINSUSERPWD"
           EOF
+        env:
+          EBRAINSUSERID: ${{ secrets.EBRAINSUSERID }}
+          EBRAINSUSERPWD: ${{ secrets.EBRAINSUSERPWD }}
       -
         name: Build and push
         uses: docker/build-push-action@v2
