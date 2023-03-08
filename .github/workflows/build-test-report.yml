@@ -1,4 +1,4 @@
-name: MIP Federation Integration Tests Pipeline
+name: Integration Tests of MIP Federations
 
 on:
   push:
