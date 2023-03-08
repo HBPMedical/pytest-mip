@@ -34,7 +34,6 @@ def test_main(selenium_driver):
 
     # 5. Type '{project_parameters.UserID}' in 'username'
     username = selenium_driver.find_element(By.CSS_SELECTOR, "#username")
-    print(f"{project_parameters.UserID}")
     username.send_keys(f"{project_parameters.UserID}")
 
     # 6. Click 'password'
@@ -43,7 +42,6 @@ def test_main(selenium_driver):
 
     # 7. Type '{project_parameters.UserPWD}' in 'password'
     password = selenium_driver.find_element(By.CSS_SELECTOR, "#password")
-    print(f"{project_parameters.UserPWD}")
     password.send_keys(f"{project_parameters.UserPWD}")
 
     # 8. Click 'login'

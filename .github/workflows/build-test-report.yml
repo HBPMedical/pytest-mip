@@ -27,13 +27,10 @@ jobs:
           UserID = "$EBRAINSUSERID"
           UserPWD = "$EBRAINSUSERPWD"
           EOF
+          cat $(pwd)/tests/project_parameters.py
         env:
           EBRAINSUSERID: ${{ secrets.EBRAINSUSERID }}
-          EBRAINSUSERPWD: ${{ secrets.EBRAINSUSERPWD }}
-      -
-        name: Test
-        run: |
-          cat $(pwd)/tests/project_parameters.py
+          EBRAINSUSERPWD: ${{ secrets.EBRAINSUSERPWD }} 
       -
         name: Build and push
         uses: docker/build-push-action@v2
