@@ -8,16 +8,11 @@ on:
   # schedule:
     # # Runs "at 6:55am every day" (see https://crontab.guru)
     # - cron: '55 6 * * *'
-  workflow_call:
-    secrets:
-      EBRAINSUSERID:
-        required: true
-      EBRAINSUSERPWD:
-        required: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: Integration test pipeline  # TO INHERIT SECRETS
     steps:
       -
         name: Checkout
