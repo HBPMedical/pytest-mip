@@ -65,6 +65,8 @@ jobs:
         run: |
           mkdir -p report
           docker run -v $(pwd)/report:/app/report -t pytest_mip .
+          # Rename report.html to index.html for GitHub Page
+          mv $(pwd)/report/report.html $(pwd)/report/index.html
       - 
         name: Deploy report to GitHub Page
         uses: peaceiris/actions-gh-pages@v3
