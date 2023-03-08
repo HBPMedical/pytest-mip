@@ -68,8 +68,7 @@ jobs:
       - 
         name: Deploy report to GitHub Page
         uses: peaceiris/actions-gh-pages@v3
-        if: |
-          github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: success() || failure()
         with:
           publish_branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
