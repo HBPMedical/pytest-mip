@@ -49,3 +49,56 @@ def selenium_driver():
     driver.implicitly_wait(20)
     yield driver
     driver.quit()
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    """Add screenshot to html report for failed tests."""
+    timestamp = datetime.now().strftime("%H-%M-%S")
+    pytest_html = item.config.pluginmanager.getplugin("html")
+    outcome = yield
+    report = outcome.get_result()
+    report.description = str(item.function.__doc__)
+    extra = getattr(report, "extra", [])
+    if report.when == "call":
+        xfail = hasattr(report, "wasxfail")
+        print(item.funcargs)
+        if (report.skipped and xfail) or (report.failed and not xfail):
+            driver = item.funcargs["selenium_driver"]
+            print(driver)
+            report_directory = os.path.dirname(item.config.option.htmlpath)
+            img_name = (
+                report.nodeid.replace("::", "_").replace(".py", "")
+                + "_"
+                + timestamp
+                + ".png"
+            )
+            img_path = os.path.join(report_directory, img_name)
+            print("Save screenshot to: %s" % img_path)
+            driver.save_screenshot(img_path)
+            if img_path:
+                html = (
+                    '<div><img src ="%s" alt="screenshot" style="width:150px:height=100px" onclick ="window.open(this.src)" align="right"/></div>'
+                    % img_name
+                )
+            extra.append(pytest_html.extras.html(html))
+        report.extra = extra
+
+
+def pytest_html_results_table_header(cells):
+    """Customize results table header columns in pytest-html report."""
+    cells.insert(2, html.th("Description"))
+    cells.insert(1, html.th("Time", class_="sortable time", col="time"))
+    cells.pop()
+
+
+def pytest_html_results_table_row(report, cells):
+    """Customize results table row columns in pytest-html report."""
+    cells.insert(2, html.td(report.description))
+    cells.insert(1, html.td(datetime.utcnow(), class_="col-time"))
+    cells.pop()
+
+
+def pytest_html_report_title(report):
+    """Set report title."""
+    report.title = "Tests of MIP Federations Report"
