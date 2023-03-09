@@ -65,7 +65,6 @@ def pytest_runtest_makereport(item, call):
         print(item.funcargs)
         if (report.skipped and xfail) or (report.failed and not xfail):
             driver = item.funcargs["selenium_driver"]
-            print(driver)
             report_directory = os.path.dirname(item.config.option.htmlpath)
             img_name = (
                 report.nodeid.replace("::", "_").replace(".py", "")
@@ -78,8 +77,8 @@ def pytest_runtest_makereport(item, call):
             driver.save_screenshot(img_path)
             if img_path:
                 html = (
-                    '<div><img src ="%s" alt="screenshot" style="width:150px:height=100px" onclick ="window.open(this.src)" align="right"/></div>'
-                    % img_name
+                    '<div><img src ="%s" alt="screenshot" style="height:auto;width:auto;max-width:%s;max-height:%s;" onclick ="window.open(this.src)" align="right"/></div>'
+                    % (img_name, "300px", "300px")
                 )
             extra.append(pytest_html.extras.html(html))
         report.extra = extra
@@ -101,4 +100,4 @@ def pytest_html_results_table_row(report, cells):
 
 def pytest_html_report_title(report):
     """Set report title."""
-    report.title = "Integration Tests of MIP Federations - Report"
+    report.title = "Integration Tests of MIP Federations"
