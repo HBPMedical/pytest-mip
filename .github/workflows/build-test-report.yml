@@ -51,6 +51,7 @@ jobs:
         if: success() || failure()
         run: |
           mv $(pwd)/report/report.html $(pwd)/report/index.html
+          cp $(pwd)/resources/logo_small.png $(pwd)/report/logo_small.png
       - 
         name: Deploy report to GitHub Page
         uses: peaceiris/actions-gh-pages@v3

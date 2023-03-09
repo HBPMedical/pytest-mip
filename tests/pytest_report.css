@@ -1,66 +1,36 @@
 /* Adjust the font and background color of the header */
-#header {
-    font-size: 22px;
-    background-color: #003399;
-    color: white;
-  }
-  
-  /* Add a border to the main content area */
-  #results-table {
-    border: 1px solid #d1d1d1;
-  }
-  
-  /* Add some padding to the main content area */
-  #results-table {
-    padding: 10px;
-  }
-  
-  /* Style the test result rows */
-  .testcase-row {
-    background-color: #f1f1f1;
-    border-bottom: 1px solid #d1d1d1;
-  }
-  
-  /* Style the test name in the result rows */
-  .testcase-row .col-name {
-    font-weight: bold;
-  }
-  
-  /* Style the test status in the result rows */
-  .testcase-row .col-result {
-    text-align: center;
-    font-weight: bold;
-  }
-  
-  /* Style the summary section at the bottom of the report */
-  #summary {
-    margin-top: 20px;
-    border: 1px solid #d1d1d1;
-    padding: 10px;
-    background-color: #f1f1f1;
-  }
-  
-  /* Style the summary table */
-  #summary .table {
-    margin-bottom: 0;
-  }
-  
-  /* Style the summary table headers */
-  #summary .table th {
-    background-color: #003399;
-    color: white;
-    font-weight: bold;
-    text-align: center;
-  }
-  
-  /* Style the summary table rows */
-  #summary .table td {
-    text-align: center;
-  }
-  
-  /* Style the summary table footer */
-  #summary .table tfoot th {
-    font-weight: bold;
-    text-align: right;
-  }
-  
+h1 {
+  font-size: 28px;
+  background-color: rgb(51, 51, 51);
+  color: white;
+  padding: 10px;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* Insert a logo to the left of the title */
+h1::before {
+  content: "";
+  background-image: url("logo_small.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+}
+
+/* Customize the title text */
+h1 span {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+h2 {
+  font-size: 24px;
+  background-color: white;
+  color: black;
+  padding: 10px;
+  margin-top: 20px;
+  margin-bottom: 0;
+}
