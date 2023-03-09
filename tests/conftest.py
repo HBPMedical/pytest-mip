@@ -11,7 +11,7 @@ import pytest
 
 
 # set up default of desired dpi for screenshots of failed tests
-DESIRED_DPI = 0.33
+DESIRED_DPI = 0.5
 
 
 def set_chrome_options(desired_dpi=None) -> None:
@@ -78,7 +78,7 @@ def pytest_runtest_makereport(item, call):
             if img_path:
                 html = (
                     '<div><img src ="%s" alt="screenshot" style="height:auto;width:auto;max-width:%s;max-height:%s;" onclick ="window.open(this.src)" align="right"/></div>'
-                    % (img_name, "300px", "300px")
+                    % (img_name, "500px", "500px")
                 )
             extra.append(pytest_html.extras.html(html))
         report.extra = extra
