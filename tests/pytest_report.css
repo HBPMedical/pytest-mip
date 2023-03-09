@@ -1,0 +1,66 @@
+/* Adjust the font and background color of the header */
+#header {
+    font-size: 22px;
+    background-color: #003399;
+    color: white;
+  }
+  
+  /* Add a border to the main content area */
+  #results-table {
+    border: 1px solid #d1d1d1;
+  }
+  
+  /* Add some padding to the main content area */
+  #results-table {
+    padding: 10px;
+  }
+  
+  /* Style the test result rows */
+  .testcase-row {
+    background-color: #f1f1f1;
+    border-bottom: 1px solid #d1d1d1;
+  }
+  
+  /* Style the test name in the result rows */
+  .testcase-row .col-name {
+    font-weight: bold;
+  }
+  
+  /* Style the test status in the result rows */
+  .testcase-row .col-result {
+    text-align: center;
+    font-weight: bold;
+  }
+  
+  /* Style the summary section at the bottom of the report */
+  #summary {
+    margin-top: 20px;
+    border: 1px solid #d1d1d1;
+    padding: 10px;
+    background-color: #f1f1f1;
+  }
+  
+  /* Style the summary table */
+  #summary .table {
+    margin-bottom: 0;
+  }
+  
+  /* Style the summary table headers */
+  #summary .table th {
+    background-color: #003399;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  /* Style the summary table rows */
+  #summary .table td {
+    text-align: center;
+  }
+  
+  /* Style the summary table footer */
+  #summary .table tfoot th {
+    font-weight: bold;
+    text-align: right;
+  }
+  

@@ -34,6 +34,7 @@ COPY tests/pytest.ini pytest.ini
 COPY tests/project_parameters.py project_parameters.py
 COPY tests/test_*.py ./
 COPY tests/conftest.py conftest.py
+COPY tests/pytest_report.css pytest_report.css
 
 # define the container entrypoint script
 COPY entrypoint.sh entrypoint.sh
