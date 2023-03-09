@@ -1,4 +1,4 @@
-# `pytest_mip`: Pytest and Selenium -based integration tests of the up-and-running MIP federations
+# `pytest_mip`: Pytest and Selenium -based integration testing and reporting of the up-and-running MIP federations
 
 [![MIP Federation Integration Tests Pipeline](https://github.com/HBPMedical/pytest-mip/actions/workflows/build-test-report.yml/badge.svg)](https://github.com/HBPMedical/pytest-mip/actions/workflows/build-test-report.yml)
 
