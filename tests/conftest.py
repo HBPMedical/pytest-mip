@@ -58,7 +58,7 @@ def pytest_runtest_makereport(item, call):
     pytest_html = item.config.pluginmanager.getplugin("html")
     outcome = yield
     report = outcome.get_result()
-    report.description = getattr(item.function, '__doc__', '')
+    report.description = getattr(item.function, "__doc__", "")
     extra = getattr(report, "extra", [])
     if report.when == "call":
         xfail = hasattr(report, "wasxfail")
@@ -93,7 +93,7 @@ def pytest_html_results_table_header(cells):
 
 def pytest_html_results_table_row(report, cells):
     """Customize results table row columns in pytest-html report."""
-    cells.insert(2, html.td(getattr(report, 'description', '')))
+    cells.insert(2, html.td(getattr(report, "description", "")))
     cells.insert(1, html.td(datetime.utcnow(), class_="col-time"))
     cells.pop()
 
