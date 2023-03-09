@@ -11,7 +11,7 @@ import pytest
 
 
 # set up default of desired dpi for screenshots of failed tests
-DESIRED_DPI = 0.5
+DESIRED_DPI = 1
 
 
 def set_chrome_options(desired_dpi=None) -> None:
