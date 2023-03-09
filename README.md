@@ -1,13 +1,17 @@
-# `pytest_mip`: Pytest and Selenium -based integration testing and reporting of the up-and-running MIP federations
+# `pytest-mip`: Pytest and Selenium -based integration testing and reporting of the up-and-running MIP federations
 
 [![MIP Federation Integration Tests Pipeline](https://github.com/HBPMedical/pytest-mip/actions/workflows/build-test-report.yml/badge.svg)](https://github.com/HBPMedical/pytest-mip/actions/workflows/build-test-report.yml)
 
-This open-source tool is developed for testing and reporting the status of the up-and-running federations of the MIP. It provides integration tests, written in Python, based on `selenium`, `pytest`, and `pytest-html`, and encapsulated in a Docker software container image for easy deployment. The process of building the container image, running the tests, generating and deploying the report is fully automated through a [GitHub Action workflow](.github/workflows/build-test-report.yml) that is run periodically at 6:55am every day. Updated overall status of the tests is indicated by the badge above.
+This open-source project is developed for testing and reporting the status of the up-and-running federations of the MIP.
+
+It provides integration tests, written in Python, based on `selenium`, `pytest`, and `pytest-html`, and encapsulated in a Docker software container image for easy deployment.
+
+The process of building the container image, running the tests, generating and deploying the report is fully automated through a [GitHub Action workflow](.github/workflows/build-test-report.yml) that is run periodically at 6:55am every day. Updated overall status of the tests is indicated by the badge above.
 
 The report, deployed as a Github Page website can be viewed @ https://hbpmedical.github.io/pytest-mip/.
 
 
-## How to run `pytest_mip` locally
+## How to run `pytest-mip` locally
 
 ### Installation instructions
 
