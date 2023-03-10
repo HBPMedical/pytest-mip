@@ -6,7 +6,7 @@ This open-source project is developed for testing and reporting the status of th
 
 It provides integration tests, written in Python, based on `selenium`, `pytest`, and `pytest-html`, and encapsulated in a Docker software container image for easy deployment.
 
-The process of building the container image, running the tests, generating and deploying the report is fully automated through a [GitHub Action workflow](.github/workflows/build-test-report.yml) that is run periodically at 6:55am every day. Updated overall status of the tests is indicated by the badge above.
+The process of building the container image, running the tests, generating and deploying the report is fully automated through a [GitHub Action workflow](.github/workflows/build-test-report.yml) that is run periodically at 6:55am UTC every day. Updated overall status of the tests is indicated by the badge above.
 
 The report, deployed as a Github Page website can be viewed @ https://hbpmedical.github.io/pytest-mip/.
 
