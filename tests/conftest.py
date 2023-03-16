@@ -1,3 +1,4 @@
+import pytest
 import os
 from datetime import datetime
 from py.xml import html
@@ -5,7 +6,9 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
-import pytest
+from selenium.webdriver.common.by import By
+import project_parameters
+
 
 """Define fixtures that will be shared among all federation tests."""
 
@@ -39,16 +42,18 @@ def set_chrome_options(desired_dpi=None) -> None:
     return chrome_options
 
 
-@pytest.fixture(scope="function")
-def selenium_driver():
+@pytest.fixture(scope="class")
+def selenium_driver(request):
     """Set up selenium chrome webdriver fixture."""
-    driver = webdriver.Chrome(
+    _driver = webdriver.Chrome(
         service=Service(ChromeDriverManager().install()), options=set_chrome_options()
     )
-    driver.maximize_window()
-    driver.implicitly_wait(20)
-    yield driver
-    driver.quit()
+    _driver.maximize_window()
+    _driver.implicitly_wait(20)
+    _driver.get(request.param)
+    request.cls.driver = _driver
+    yield request.cls.driver
+    request.cls.driver.quit()
 
 
 @pytest.hookimpl(hookwrapper=True)
@@ -67,7 +72,12 @@ def pytest_runtest_makereport(item, call):
             driver = item.funcargs["selenium_driver"]
             report_directory = os.path.dirname(item.config.option.htmlpath)
             img_name = (
-                report.nodeid.replace("::", "_").replace(".py", "")
+                report.nodeid.replace("::", "_")
+                .replace(".py", "")
+                .replace("://", "_")
+                .replace("[", "_")
+                .replace("/]", "")
+                .replace("]", "")
                 + "_"
                 + timestamp
                 + ".png"
