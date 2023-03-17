@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Integration Tests of MIP Federations</title>
+    <style>
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 12px;
+            /* do not increase min-width as some may use split screens */
+            min-width: 800px;
+            color: #999;
+        }
+
+        /* Adjust the font and background color of the header */
+        h1 {
+            font-size: 28px;
+            background-color: rgb(51, 51, 51);
+            color: white;
+            padding: 10px;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Insert a logo to the left of the title */
+        h1::before {
+            content: "";
+            background-image: url("logo_small.png");
+            background-size: contain;
+            background-repeat: no-repeat;
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+
+        /* Customize the title text */
+        h1 span {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        h2 {
+            font-size: 24px;
+            background-color: white;
+            color: black;
+            padding: 10px;
+            margin-top: 20px;
+            margin-bottom: 0;
+        }
+
+        p {
+            color: black;
+        }
+
+        a {
+            color: #999;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+    </style>
+
+<body>
+    <h1>Integration Test Reports</h1>
+    <table id="reportsTable">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Link</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+        // define a function to fetch the JSON data and populate the table
+        function populateTable() {
+            // use the fetch API to get the list of directories
+            fetch('.')
+                .then(response => response.text())
+                .then(html => {
+                    // parse the HTML response into a DOM object
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const reportsTable = doc.getElementById('reportsTable').getElementsByTagName('tbody')[0];
+
+                    // use the Array.from() method to convert the HTMLCollection into an array
+                    const reportDirs = Array.from(doc.querySelectorAll('a'))
+                        .filter(a => a.textContent.startsWith('report-') && a.getAttribute('href').endsWith('/'))
+                        .map(a => a.textContent);
+
+                    // loop through the directory names and fetch the corresponding JSON data
+                    reportDirs.forEach(dir => {
+                        const jsonUrl = `${dir}integration_test_info.json`;
+                        fetch(jsonUrl)
+                            .then(response => response.json())
+                            .then(data => {
+                                const row = document.createElement('tr');
+                                const dateCell = document.createElement('td');
+                                const linkCell = document.createElement('td');
+                                const link = document.createElement('a');
+                                const statusCell = document.createElement('td');
+
+                                dateCell.textContent = data.date;
+                                link.href = data.link;
+                                link.textContent = 'Link';
+                                linkCell.appendChild(link);
+                                statusCell.textContent = data.status;
+
+                                row.appendChild(dateCell);
+                                row.appendChild(linkCell);
+                                row.appendChild(statusCell);
+
+                                reportsTable.appendChild(row);
+                            })
+                            .catch(error => console.error(`Error fetching JSON data for ${dir}:`, error));
+                    });
+                })
+                .catch(error => console.error('Error fetching directory list:', error));
+        }
+
+        // call the populateTable function when the page is loaded
+        window.addEventListener('DOMContentLoaded', populateTable);
+    </script>
+</body>
