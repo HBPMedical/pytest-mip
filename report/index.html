@@ -81,11 +81,11 @@
         // define a function to fetch the JSON data and populate the table
         function populateTable() {
             fetch('https://hbpmedical.github.io/pytest-mip/reports.json')
-                .then(response => response.json())
-                .then(data => {
+                .then(reports => reports.json())
+                .then(reports => {
                     const tableBody = document.querySelector('#reportsTable tbody');
 
-                    data.forEach(report => {
+                    reports.reports.forEach(report => {
                         const row = document.createElement('tr');
 
                         const dateCell = document.createElement('td');
