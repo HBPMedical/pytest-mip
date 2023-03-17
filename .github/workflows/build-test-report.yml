@@ -64,7 +64,7 @@ jobs:
               json=$(curl -s "https://hbpmedical.github.io/pytest-mip/reports.json")
 
               # create a new JSON object to append
-              new_record=$(echo "{\"date\": \"${{ env.current_date }}\", \"link\": \"https://hbpmedical.github.io/pytest-mip/report-$(date +%d-%m-%Y)\", \"status\": \"$?\"}")
+              new_record=$(echo "{\"date\": \"${{ env.current_date }}\", \"link\": \"https://hbpmedical.github.io/pytest-mip/report-${{ env.current_date }}\", \"status\": \"$?\"}")
 
               # append the new record to the "reports" array
               json=$(echo $json | jq ".reports += [$new_record]")
