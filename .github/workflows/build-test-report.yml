@@ -75,6 +75,6 @@ jobs:
           publish_branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: report-${{ env.current_date }}
-          target_dir: report-${{ env.current_date }}
+          destination_dir: report-${{ env.current_date }}
           force_orphan: true
-          clean: false
+          keep_files: true
