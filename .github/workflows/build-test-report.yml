@@ -13,6 +13,8 @@ jobs:
   build-test-report:
     runs-on: ubuntu-latest
     environment: Integration test pipeline  # TO INHERIT SECRETS
+    env:
+      current_date: ${{ format('DD-MM-YYYY', github.event.created_at) }}
     steps:
       -
         name: Checkout
@@ -44,14 +46,22 @@ jobs:
       -
         name: Run integration tests of the up-and-running MIP federations
         run: |
-          mkdir -p report
-          docker run -v $(pwd)/report:/app/report -t pytest_mip .
+          mkdir -p report-${{ env.current_date }}
+          docker run -v $(pwd)/report-${{ env.current_date }}:/app/report -t pytest_mip .
       -
         name: Rename report.html to index.html for GitHub Page
         if: success() || failure()
         run: |
-          mv $(pwd)/report/report.html $(pwd)/report/index.html
-          cp $(pwd)/resources/logo_small.png $(pwd)/report/logo_small.png
+          mv $(pwd)/report-${{ env.current_date }}/report.html $(pwd)/report-${{ env.current_date }}/index.html
+          # generate JSON file with information about the test run
+          cat << EOF > $(pwd)/report-${{ env.current_date }}/integration_test_info.json
+          {
+            "date": "${{ env.current_date }}"
+            "link": "report-${{ env.current_date }}/index.html"
+            "status": "$?"
+          }
+          EOF
+          cat $(pwd)/report-${{ env.current_date }}/integration_test_info.json
       - 
         name: Deploy report to GitHub Page
         uses: peaceiris/actions-gh-pages@v3
@@ -59,5 +69,7 @@ jobs:
         with:
           publish_branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: report
+          publish_dir: report-${{ env.current_date }}
+          target_dir: report-${{ env.current_date }}
           force_orphan: true
+          clean: false
