@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Integration Tests of MIP Federations</title>
+    <style>
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 12px;
+            /* do not increase min-width as some may use split screens */
+            min-width: 800px;
+            color: #999;
+        }
+
+        /* Adjust the font and background color of the header */
+        h1 {
+            font-size: 28px;
+            background-color: rgb(51, 51, 51);
+            color: white;
+            padding: 10px;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Insert a logo to the left of the title */
+        h1::before {
+            content: "";
+            background-image: url("logo_small.png");
+            background-size: contain;
+            background-repeat: no-repeat;
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+
+        /* Customize the title text */
+        h1 span {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        h2 {
+            font-size: 24px;
+            background-color: white;
+            color: black;
+            padding: 10px;
+            margin-top: 20px;
+            margin-bottom: 0;
+        }
+
+        p {
+            color: black;
+        }
+
+        a {
+            color: #999;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+    </style>
+
+<body>
+    <h1>Integration Test Reports</h1>
+    <table id="reportsTable">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Link</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+        // define a function to fetch the JSON data and populate the table
+        function populateTable() {
+            fetch('https://hbpmedical.github.io/pytest-mip/reports.json')
+                .then(reports => reports.json())
+                .then(reports => {
+                    const tableBody = document.querySelector('#reportsTable tbody');
+
+                    reports.reports.forEach(report => {
+                        const row = document.createElement('tr');
+
+                        const dateCell = document.createElement('td');
+                        dateCell.textContent = report.date;
+                        row.appendChild(dateCell);
+
+                        const linkCell = document.createElement('td');
+                        const link = document.createElement('a');
+                        link.textContent = report.link;
+                        link.href = report.link;
+                        link.target = '_blank';
+                        linkCell.appendChild(link);
+                        row.appendChild(linkCell);
+
+                        const statusCell = document.createElement('td');
+                        statusCell.textContent = report.status;
+                        row.appendChild(statusCell);
+
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error(error));
+        }
+
+        // call the populateTable function when the page is loaded
+        window.addEventListener('DOMContentLoaded', populateTable);
+    </script>
+</body>
