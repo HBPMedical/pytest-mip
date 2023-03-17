@@ -130,7 +130,7 @@
                         row.appendChild(linkCell);
 
                         const statusCell = document.createElement('td');
-                        statusCell.textContent = report.status === 0 ? '&#10004' : '&#9747' ;
+                        statusCell.innerHTML = report.status === '0' ? '&#10004' : '&#9747' ;
                         row.appendChild(statusCell);
 
                         tableBody.appendChild(row);
