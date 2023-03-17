@@ -47,26 +47,30 @@ jobs:
       -
         name: Run integration tests of the up-and-running MIP federations
         run: |
-          mkdir -p report-${{ env.current_date }}
-          docker run -v $(pwd)/report-${{ env.current_date }}:/app/report -t pytest_mip .
+          mkdir -p report/report-${{ env.current_date }}
+          docker run -v $(pwd)/report/report-${{ env.current_date }}:/app/report -t pytest_mip .
       -
         name: Rename report.html to index.html for GitHub Page
         if: success() || failure()
         run: |
-          mv $(pwd)/report-${{ env.current_date }}/report.html $(pwd)/report-${{ env.current_date }}/index.html
-      -
-        name: Generate JSON file with information about the test run for table in main index.html
-        if: success() || failure()
+          mv $(pwd)/report/report-${{ env.current_date }}/report.html $(pwd)/report/report-${{ env.current_date }}/index.html
+      - 
+        name: Install JQ
+        run: sudo apt-get install jq
+      - 
+        name: Update Reports JSON
         run: |
-          # 
-          cat << EOF > $(pwd)/report-${{ env.current_date }}/integration_test_info.json
-          {
-            "date": "${{ env.current_date }}",
-            "link": "report-${{ env.current_date }}/index.html",
-            "status": "$?"
-          }
-          EOF
-          cat $(pwd)/report-${{ env.current_date }}/integration_test_info.json
+              # read the existing JSON content
+              json=$(curl -s "https://hbpmedical.github.io/pytest-mip/reports.json")
+
+              # create a new JSON object to append
+              new_record=$(echo "{\"date\": \"${{ env.current_date }}\", \"link\": \"https://hbpmedical.github.io/pytest-mip/report-$(date +%d-%m-%Y)\", \"status\": \"$?\"}")
+
+              # append the new record to the "reports" array
+              json=$(echo $json | jq ".reports += [$new_record]")
+
+              # write the updated JSON content back to the file
+              echo $json > $(pwd)/report/reports.json
       - 
         name: Deploy report to GitHub Page
         uses: peaceiris/actions-gh-pages@v3
@@ -74,7 +78,7 @@ jobs:
         with:
           publish_branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: report-${{ env.current_date }}
-          destination_dir: report-${{ env.current_date }}
+          publish_dir: report
+          destination_dir: .
           force_orphan: true
           keep_files: true
