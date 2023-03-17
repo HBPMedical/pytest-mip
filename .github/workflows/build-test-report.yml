@@ -13,8 +13,6 @@ jobs:
   build-test-report:
     runs-on: ubuntu-latest
     environment: Integration test pipeline  # TO INHERIT SECRETS
-    env:
-      current_date: ${{ format('DD-MM-YYYY', github.event.created_at) }}
     steps:
       -
         name: Checkout
@@ -44,6 +42,9 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
       -
+        name: Get current date
+        run: echo "current_date=$(date +%d-%m-%Y)" >> $GITHUB_ENV
+      -
         name: Run integration tests of the up-and-running MIP federations
         run: |
           mkdir -p report-${{ env.current_date }}
@@ -53,11 +54,15 @@ jobs:
         if: success() || failure()
         run: |
           mv $(pwd)/report-${{ env.current_date }}/report.html $(pwd)/report-${{ env.current_date }}/index.html
-          # generate JSON file with information about the test run
+      -
+        name: Generate JSON file with information about the test run for table in main index.html
+        if: success() || failure()
+        run: |
+          # 
           cat << EOF > $(pwd)/report-${{ env.current_date }}/integration_test_info.json
           {
-            "date": "${{ env.current_date }}"
-            "link": "report-${{ env.current_date }}/index.html"
+            "date": "${{ env.current_date }}",
+            "link": "report-${{ env.current_date }}/index.html",
             "status": "$?"
           }
           EOF
