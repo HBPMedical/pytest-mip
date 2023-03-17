@@ -80,48 +80,34 @@
     <script>
         // define a function to fetch the JSON data and populate the table
         function populateTable() {
-            // use the fetch API to get the list of directories
-            fetch('.')
-                .then(response => response.text())
-                .then(html => {
-                    // parse the HTML response into a DOM object
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const reportsTable = doc.getElementById('reportsTable').getElementsByTagName('tbody')[0];
+            fetch('https://hbpmedical.github.io/pytest-mip/reports.json')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.querySelector('#reportsTable tbody');
 
-                    // use the Array.from() method to convert the HTMLCollection into an array
-                    const reportDirs = Array.from(doc.querySelectorAll('a'))
-                        .filter(a => a.textContent.startsWith('report-') && a.getAttribute('href').endsWith('/'))
-                        .map(a => a.textContent);
+                    data.forEach(report => {
+                        const row = document.createElement('tr');
 
-                    // loop through the directory names and fetch the corresponding JSON data
-                    reportDirs.forEach(dir => {
-                        const jsonUrl = `${dir}integration_test_info.json`;
-                        fetch(jsonUrl)
-                            .then(response => response.json())
-                            .then(data => {
-                                const row = document.createElement('tr');
-                                const dateCell = document.createElement('td');
-                                const linkCell = document.createElement('td');
-                                const link = document.createElement('a');
-                                const statusCell = document.createElement('td');
+                        const dateCell = document.createElement('td');
+                        dateCell.textContent = report.date;
+                        row.appendChild(dateCell);
 
-                                dateCell.textContent = data.date;
-                                link.href = data.link;
-                                link.textContent = 'Link';
-                                linkCell.appendChild(link);
-                                statusCell.textContent = data.status;
+                        const linkCell = document.createElement('td');
+                        const link = document.createElement('a');
+                        link.textContent = report.link;
+                        link.href = report.link;
+                        link.target = '_blank';
+                        linkCell.appendChild(link);
+                        row.appendChild(linkCell);
 
-                                row.appendChild(dateCell);
-                                row.appendChild(linkCell);
-                                row.appendChild(statusCell);
+                        const statusCell = document.createElement('td');
+                        statusCell.textContent = report.status;
+                        row.appendChild(statusCell);
 
-                                reportsTable.appendChild(row);
-                            })
-                            .catch(error => console.error(`Error fetching JSON data for ${dir}:`, error));
+                        tableBody.appendChild(row);
                     });
                 })
-                .catch(error => console.error('Error fetching directory list:', error));
+                .catch(error => console.error(error));
         }
 
         // call the populateTable function when the page is loaded
