@@ -30,7 +30,7 @@ h1 {
 /* Insert a logo to the left of the title */
 h1::before {
     content: "";
-    background-image: url("logo_small.png");
+    background-image: url("../logo_small.png");
     background-size: contain;
     background-repeat: no-repeat;
     width: 50px;
