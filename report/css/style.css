@@ -1,0 +1,87 @@
+/*
+ * CSS for main report index.html
+ *
+*/
+
+/******************************
+* MAIN SETTINGS
+******************************/
+
+/* Adjust the default font type, size and color */
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    /* do not increase min-width as some may use split screens */
+    min-width: 800px;
+    color: #999;
+}
+
+/* Adjust the font and background color of the header */
+h1 {
+    font-size: 28px;
+    background-color: rgb(51, 51, 51);
+    color: white;
+    padding: 10px;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+}
+
+/* Insert a logo to the left of the title */
+h1::before {
+    content: "";
+    background-image: url("logo_small.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+}
+
+/* Customize the title text */
+h1 span {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+h2 {
+    font-size: 24px;
+    background-color: white;
+    color: black;
+    padding: 10px;
+    margin-top: 20px;
+    margin-bottom: 0;
+}
+
+p {
+    color: black;
+}
+
+a {
+    color: #999;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+/******************************
+* REPORTS SETTINGS
+******************************/
+table {
+    border: 1px solid #e6e6e6;
+    color: #999;
+    font-size: 12px;
+    width: 100%;
+}
+
+table th,
+table td {
+    padding: 5px;
+    border: 1px solid #E6E6E6;
+    text-align: center;
+}
+
+table th {
+    font-weight: bold;
+}
