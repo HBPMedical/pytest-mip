@@ -54,15 +54,11 @@ h2 {
 }
 
 p {
-    color: black;
+    color: rgb(63, 63, 63);
 }
 
 a {
-    color: #999;
-}
-
-table {
-    border-collapse: collapse;
+    color: rgb(36, 36, 36);
 }
 
 /******************************
@@ -73,6 +69,8 @@ table {
     color: #999;
     font-size: 12px;
     width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
 }
 
 table th,
@@ -84,4 +82,25 @@ table td {
 
 table th {
     font-weight: bold;
+}
+
+table thead th {
+    padding: 5px;
+    background-color: rgb(51, 51, 51);
+    color: white;
+    text-align: center;
+}
+
+/******************************
+* FOOTER SETTINGS
+******************************/
+footer {
+    background-color: rgb(51, 51, 51);
+    color: white;
+    padding: 10px;
+    margin-top: 20px;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    text-align: center;
 }
