@@ -1,0 +1,30 @@
+{
+  "creators": [
+    {
+      "affiliation": "Department of Clinical Neurosciences, Lausanne University Hospital, Lausanne, Switzerland",
+      "name": "Tourbier, Sébastien",
+      "orcid": "0000-0002-4441-899X"
+    },
+    {
+      "affiliation": "Department of Clinical Neurosciences, Lausanne University Hospital, Lausanne, Switzerland",
+      "name": "Schaffhauser, Birgit",
+      "orcid": "0000-0002-7863-0542"
+    },
+    {
+      "affiliation": "Department of Clinical Neurosciences, Lausanne University Hospital, Lausanne, Switzerland",
+      "name": "Ryvlin, Philippe",
+      "orcid": "0000-0001-7775-6576"
+    }
+  ],
+  "keywords": [
+    "medical informatics platform",
+    "selenium-python",
+    "pytest",
+    "github-pages",
+    "github-actions",
+    "pytest-html",
+    "junit-xml"
+  ],
+  "license": "Apache-2.0",
+  "upload_type": "software"
+}
