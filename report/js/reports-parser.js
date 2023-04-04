@@ -12,8 +12,38 @@ const FEDERATION_URL_NAME_MAPPING = {
   "test_data[https://qa.hbpmip.link/]": "QA",
 };
 
+/** Define a function to read a JUnit XML file and return the content in JSON format.
+ * @param {string} url - The URL of the JUnit XML file
+ * @returns {Array<{name, status}>} - The content of the JUnit XML file in JSON format
+ */
+function parseJUnitXML(
+  url = "https://hbpmedical.github.io/pytest-mip/report-03-04-2023-06-59/junit-report.xml"
+) {
+  const parser = new DOMParser();
+  fetch(url)
+    .then((response) => response.text())
+    .then((text) => {
+      const xml = parser.parseFromString(text, "text/xml");
+      const testsuite = xml.getElementsByTagName("testsuite")[0];
+      const tests = testsuite.getElementsByTagName("testcase");
+      const testsArray = Array.from(tests);
+      const testsJSON = testsArray
+        .map((test) => {
+          const name = test.getAttribute("name");
+          if (name.includes("test_data")) {
+            const status =
+              test.getElementsByTagName("failure").length > 0
+                ? "failed"
+                : "passed";
+            return { name, status };
+          }
         })
-        .catch(error => console.error(error));
+        .filter((test) => test !== undefined);
+      console.log(testsJSON);
+    })
+    .catch((error) => console.error(error));
+}
+
 /** Define a function to fetch the JSON data and populate the table
  * @param {string} url - The URL of the main reports.json file listing all the reports
  * @returns {void}
