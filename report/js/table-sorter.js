@@ -71,3 +71,7 @@ function sortTableByColumn(n) {
     }
   }
 }
+
+function sortTableByDate() {
+  sortTableByColumn(0);
+}
