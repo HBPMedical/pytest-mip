@@ -68,7 +68,7 @@ function createReportTableHeader() {
   headerRow.appendChild(dateHeader);
   // Append the link to the report to the table head
   const linkHeader = document.createElement("th");
-  linkHeader.innerHTML = "Link";
+  linkHeader.innerHTML = "Pytest HTML Report";
   linkHeader.setAttribute("rowspan", "2");
   headerRow.appendChild(linkHeader);
   // Append the overall status to the table head
@@ -118,7 +118,7 @@ async function createReportTableRow(report) {
   // Append the link to the report
   const linkCell = document.createElement("td");
   const link = document.createElement("a");
-  link.textContent = report.link;
+  link.textContent = "link";
   link.href = report.link;
   link.target = "_blank";
   linkCell.appendChild(link);
