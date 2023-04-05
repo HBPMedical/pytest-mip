@@ -2,52 +2,61 @@
  * @file
  * JS for enabling table sorting by column in the reports table.
  * @author Sébastien Tourbier
+ * @license Apache-2.0
  */
 
-/** Sort reports table by column.
- * @param {number} n - The column number to sort by.
- * @returns {void}
- * Code adapted from https://www.w3schools.com/howto/howto_js_sort_table.asp.
+/** 
+ * Parse a string in the format DD-MM-YYYY HH:MM and return a Date object.
+ * @param {string} str - Date/Time string in the format DD-MM-YYYY HH:MM
+ * @returns {Date} - a Date object
  */
-function sortTableByColumn(n) {
-  let table,
-    rows,
-    switching,
-    i,
-    x,
-    y,
-    shouldSwitch,
-    dir,
-    switchcount = 0;
-  table = document.getElementById("reportsTable");
-  switching = true;
+function getDate(str) {
+    // Parse date and time
+    var ar =  /(\d{2})-(\d{2})-(\d{4}) (\d{2}):(\d{2})/.exec( str )
+    // Return the Date object initialized with parsed date and time
+    return new Date(
+        (+ar[3]),
+        (+ar[2])-1, // Careful, month starts at 0!
+        (+ar[1]),
+        (+ar[4]),
+        (+ar[5]),
+        0
+    );
+}
+
+/** 
+ * Sort the reports table by ordering the Date column.
+ * @returns {void}
+ */
+function sortTableByDate() {
+  // Get the reports table
+  var table = document.getElementById("reportsTable");
+  // Get the table body
+  var tBody = table.getElementsByTagName('tbody')[0];
+  // Get the rows of the table body
+  var rows = tBody.getElementsByTagName('tr');
+  // Initialize variables to switch ascending/descending order
+  var switching = true;
+  var switchcount = 0;
   // Set the sorting direction to ascending:
   dir = "asc";
-  /* Make a loop that will continue until
-    no switching has been done: */
   while (switching) {
-    // Start by saying: no switching is done:
     switching = false;
-    rows = table.rows;
-    /* Loop through all table rows (except the
-        first, which contains table headers): */
-    for (i = 1; i < rows.length - 1; i++) {
-      // Start by saying there should be no switching:
-      shouldSwitch = false;
-      /* Get the two elements you want to compare,
-            one from current row and one from the next: */
-      x = rows[i].getElementsByTagName("TD")[n];
-      y = rows[i + 1].getElementsByTagName("TD")[n];
-      /* Check if the two rows should switch place,
-            based on the direction, asc or desc: */
+    for (var i = 0; i < (rows.length - 1); i++) {
+      var shouldSwitch = false;
+      // Extract the dates of two report rows
+      var date1 = getDate(rows[i].cells[0].innerHTML.trim());
+      var date2 = getDate(rows[i + 1].cells[0].innerHTML.trim());
+      // Check if the two rows should switch place,
+      // based on the direction, asc or desc
       if (dir == "asc") {
-        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+        if (date1 > date2) {
           // If so, mark as a switch and break the loop:
           shouldSwitch = true;
           break;
         }
       } else if (dir == "desc") {
-        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+        if (date1 < date2) {
           // If so, mark as a switch and break the loop:
           shouldSwitch = true;
           break;
@@ -55,23 +64,17 @@ function sortTableByColumn(n) {
       }
     }
     if (shouldSwitch) {
-      /* If a switch has been marked, make the switch
-            and mark that a switch has been done: */
       rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
       switching = true;
       // Each time a switch is done, increase this count by 1:
       switchcount++;
     } else {
-      /* If no switching has been done AND the direction is "asc",
-            set the direction to "desc" and run the while loop again. */
+      // If no switching has been done AND the direction is "asc",
+      // set the direction to "desc" and run the while loop again
       if (switchcount == 0 && dir == "asc") {
         dir = "desc";
         switching = true;
       }
     }
   }
-}
-
-function sortTableByDate() {
-  sortTableByColumn(0);
 }
