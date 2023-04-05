@@ -26,9 +26,10 @@ function getDate(str) {
 
 /** 
  * Sort the reports table by ordering the Date column.
+ * @param {string} dir - string specifying the sort order ("asc" for ascending or "desc" for descending)
  * @returns {void}
  */
-function sortTableByDate() {
+function sortTableByDate(dir = "asc") {
   // Get the reports table
   var table = document.getElementById("reportsTable");
   // Get the table body
@@ -38,8 +39,6 @@ function sortTableByDate() {
   // Initialize variables to switch ascending/descending order
   var switching = true;
   var switchcount = 0;
-  // Set the sorting direction to ascending:
-  dir = "asc";
   while (switching) {
     switching = false;
     for (var i = 0; i < (rows.length - 1); i++) {
