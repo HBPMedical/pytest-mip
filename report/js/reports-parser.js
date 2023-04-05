@@ -12,7 +12,8 @@ const FEDERATION_URL_NAME_MAPPING = {
   "test_data[https://qa.hbpmip.link/]": "QA",
 };
 
-/** Define a function to read a JUnit XML file and return the content in JSON format.
+/**
+ * Define a function to read a JUnit XML file and return the content in JSON format.
  * @param {string} url - The URL of the JUnit XML file
  * @returns {Array<{name, status}>} - The content of the JUnit XML file in JSON format
  */
@@ -51,7 +52,86 @@ async function parseJUnitXML(
     .catch((error) => console.error(error));
 }
 
-/** Define a function to fetch the JSON data and populate the table
+/**
+ * Define a function to create the table header.
+ */
+function createReportTableHeader() {
+  // Get the table head
+  const tableHead = document.querySelector("#reportsTable thead");
+  // Create the header row
+  const headerRow = document.createElement("tr");
+  // Append the date to the table head
+  const dateHeader = document.createElement("th");
+  dateHeader.innerHTML = "Date";
+  dateHeader.setAttribute("onclick", "sortTableByDate()");
+  headerRow.appendChild(dateHeader);
+  // Append the link to the report to the table head
+  const linkHeader = document.createElement("th");
+  linkHeader.innerHTML = "Link";
+  headerRow.appendChild(linkHeader);
+  // Append the overall status to the table head
+  const statusHeader = document.createElement("th");
+  statusHeader.textContent = "Status";
+  headerRow.appendChild(statusHeader);
+  // Append the federation name to the table head
+  for (const [key, value] of Object.entries(FEDERATION_URL_NAME_MAPPING)) {
+    const federationHeader = document.createElement("th");
+    federationHeader.innerHTML = value;
+    headerRow.appendChild(federationHeader);
+  }
+  // Append the header row to the table head
+  tableHead.appendChild(headerRow);
+}
+
+/**
+ * Define a function to create a table row for a report.
+ * @param {Object} report - The report object retrieved from the reports.json file
+ * @returns {void}
+ * @async
+ */
+async function createReportTableRow(report) {
+  // Get the table body
+  const tableBody = document.querySelector("#reportsTable tbody");
+  // Create a new row
+  const row = document.createElement("tr");
+  // Append the date
+  const dateCell = document.createElement("td");
+  dateCell.textContent = report.date;
+  row.appendChild(dateCell);
+  // Append the link to the report
+  const linkCell = document.createElement("td");
+  const link = document.createElement("a");
+  link.textContent = report.link;
+  link.href = report.link;
+  link.target = "_blank";
+  linkCell.appendChild(link);
+  row.appendChild(linkCell);
+  // Append the overall status
+  const statusCell = document.createElement("td");
+  if (report.status === "0") {
+    statusCell.innerHTML = '<span style="color: green">&#10004;</span>';
+  } else {
+    statusCell.innerHTML = '<span style="color: red">&#9747;</span>';
+  }
+  row.appendChild(statusCell);
+  // Parse the JUnit XML report file to show status of each federation
+  const jUnitXMLReport = await Promise.resolve(parseJUnitXML(report.junitxml));
+  for (const [key, value] of Object.entries(FEDERATION_URL_NAME_MAPPING)) {
+    const federationCell = document.createElement("td");
+    const test = jUnitXMLReport.find((test) => test.name === value);
+    if (test.status === "passed") {
+      federationCell.innerHTML = '<span style="color: green">&#10004;</span>';
+    } else {
+      federationCell.innerHTML = '<span style="color: red">&#9747;</span>';
+    }
+    row.appendChild(federationCell);
+  }
+  // Append the row to the table body
+  tableBody.appendChild(row);
+}
+
+/**
+ * Define a function to fetch the JSON data and populate the table
  * @param {string} url - The URL of the main reports.json file listing all the reports
  * @returns {void}
  */
@@ -62,76 +142,11 @@ function parseJSONReports(
     .then((reports) => reports.json())
     .then((reports) => {
       // Create the table header
-      const tableHead = document.querySelector("#reportsTable thead");
-      const headerRow = document.createElement("tr");
-      // Append the date to the table head
-      const dateHeader = document.createElement("th");
-      dateHeader.innerHTML = "Date";
-      dateHeader.setAttribute("onclick", "sortTableByDate()");
-      headerRow.appendChild(dateHeader);
-      // Append the link to the report to the table head
-      const linkHeader = document.createElement("th");
-      linkHeader.innerHTML = "Link";
-      headerRow.appendChild(linkHeader);
-      // Append the overall status to the table head
-      const statusHeader = document.createElement("th");
-      statusHeader.textContent = "Status";
-      headerRow.appendChild(statusHeader);
-      // Append the federation name to the table head
-      for (const [key, value] of Object.entries(FEDERATION_URL_NAME_MAPPING)) {
-        const federationHeader = document.createElement("th");
-        federationHeader.innerHTML = value;
-        headerRow.appendChild(federationHeader);
-      }
-      // Append the header row to the table head
-      tableHead.appendChild(headerRow);
+      createReportTableHeader();
 
-      // Create the table body
-      const tableBody = document.querySelector("#reportsTable tbody");
-      // Loop through the reports
+      // Create and add the table row for each report
       reports.reports.forEach(async (report) => {
-        // Create a new row
-        const row = document.createElement("tr");
-        // Append the date
-        const dateCell = document.createElement("td");
-        dateCell.textContent = report.date;
-        row.appendChild(dateCell);
-        // Append the link to the report
-        const linkCell = document.createElement("td");
-        const link = document.createElement("a");
-        link.textContent = report.link;
-        link.href = report.link;
-        link.target = "_blank";
-        linkCell.appendChild(link);
-        row.appendChild(linkCell);
-        // Append the overall status
-        const statusCell = document.createElement("td");
-        if (report.status === "0") {
-          statusCell.innerHTML = '<span style="color: green">&#10004;</span>';
-        } else {
-          statusCell.innerHTML = '<span style="color: red">&#9747;</span>';
-        }
-        row.appendChild(statusCell);
-        // Parse the JUnit XML report file to show status of each federation
-        const jUnitXMLReport = await Promise.resolve(
-          parseJUnitXML(report.junitxml)
-        );
-        for (const [key, value] of Object.entries(
-          FEDERATION_URL_NAME_MAPPING
-        )) {
-          const federationCell = document.createElement("td");
-          const test = jUnitXMLReport.find((test) => test.name === value);
-          if (test.status === "passed") {
-            federationCell.innerHTML =
-              '<span style="color: green">&#10004;</span>';
-          } else {
-            federationCell.innerHTML =
-              '<span style="color: red">&#9747;</span>';
-          }
-          row.appendChild(federationCell);
-        }
-        // Append the row to the table body
-        tableBody.appendChild(row);
+        createReportTableRow(report);
       });
     })
     .catch((error) => console.error(error));
