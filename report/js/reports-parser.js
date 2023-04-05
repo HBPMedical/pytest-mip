@@ -132,16 +132,28 @@ async function createReportTableRow(report) {
   }
   row.appendChild(statusCell);
   // Parse the JUnit XML report file to show status of each federation
-  const jUnitXMLReport = await Promise.resolve(parseJUnitXML(report.junitxml));
-  for (const [key, value] of Object.entries(FEDERATION_URL_NAME_MAPPING)) {
-    const federationCell = document.createElement("td");
-    const test = jUnitXMLReport.find((test) => test.name === value);
-    if (test.status === "passed") {
-      federationCell.innerHTML = '<span style="color: green">&#10004;</span>';
-    } else {
-      federationCell.innerHTML = '<span style="color: red">&#9747;</span>';
+  if (report.junitxml) {
+    console.log("Read JUnitXML report: ", report.junitxml);
+    const jUnitXMLReport = await Promise.resolve(
+      parseJUnitXML(report.junitxml)
+    );
+    for (const [key, value] of Object.entries(FEDERATION_URL_NAME_MAPPING)) {
+      const federationCell = document.createElement("td");
+      const test = jUnitXMLReport.find((test) => test.name === value);
+      if (test.status === "passed") {
+        federationCell.innerHTML = '<span style="color: green">&#10004;</span>';
+      } else {
+        federationCell.innerHTML = '<span style="color: red">&#9747;</span>';
+      }
+      row.appendChild(federationCell);
     }
-    row.appendChild(federationCell);
+  } else {
+    console.log("No JUnitXML report found for: ", report.link);
+    for (const [key, value] of Object.entries(FEDERATION_URL_NAME_MAPPING)) {
+      const federationCell = document.createElement("td");
+      federationCell.innerHTML = '<span style="color: #999;">n/a</span>';
+      row.appendChild(federationCell);
+    }
   }
   // Append the row to the table body
   tableBody.appendChild(row);
