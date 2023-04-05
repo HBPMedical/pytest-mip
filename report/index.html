@@ -25,11 +25,13 @@
     <script src="js/table-sorter.js"></script>
 
     <script type="text/javascript">
-        // call the parseJSONReports function when the page is loaded
+        // Call the parseJSONReports function when the page is loaded
         // to parse the JSON file and the JUnitXML test reports and
         // populate the table
-        console.log('Method called')
         window.addEventListener('DOMContentLoaded', parseJSONReports("https://hbpmedical.github.io/pytest-mip/reports.json"));
+        // Sort the table rows by date with descending order when
+        // the page is loaded
+        window.addEventListener('DOMContentLoaded', sortTableByDate("desc"));
     </script>
 
 </body>
