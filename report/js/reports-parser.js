@@ -64,23 +64,40 @@ function createReportTableHeader() {
   const dateHeader = document.createElement("th");
   dateHeader.innerHTML = "Date";
   dateHeader.setAttribute("onclick", "sortTableByDate()");
+  dateHeader.setAttribute("rowspan", "2");
   headerRow.appendChild(dateHeader);
   // Append the link to the report to the table head
   const linkHeader = document.createElement("th");
   linkHeader.innerHTML = "Link";
+  linkHeader.setAttribute("rowspan", "2");
   headerRow.appendChild(linkHeader);
   // Append the overall status to the table head
   const statusHeader = document.createElement("th");
-  statusHeader.textContent = "Status";
+  statusHeader.innerHTML = "Overall Status";
+  statusHeader.setAttribute("rowspan", "2");
   headerRow.appendChild(statusHeader);
   // Append the federation name to the table head
+  const federationHeaderTitle = document.createElement("th");
+  federationHeaderTitle.innerHTML = "Federation Status";
+  federationHeaderTitle.setAttribute(
+    "colspan",
+    Object.keys(FEDERATION_URL_NAME_MAPPING).length
+  );
+  headerRow.appendChild(federationHeaderTitle);
+
+  // Append the first header row to the table head
+  tableHead.appendChild(headerRow);
+
+  // Create the header row
+  const secondHeaderRow = document.createElement("tr");
+
   for (const [key, value] of Object.entries(FEDERATION_URL_NAME_MAPPING)) {
     const federationHeader = document.createElement("th");
     federationHeader.innerHTML = value;
-    headerRow.appendChild(federationHeader);
+    secondHeaderRow.appendChild(federationHeader);
   }
   // Append the header row to the table head
-  tableHead.appendChild(headerRow);
+  tableHead.appendChild(secondHeaderRow);
 }
 
 /**
