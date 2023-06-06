@@ -58,9 +58,11 @@ jobs:
           mv $(pwd)/report/report-${{ env.current_date }}/report.html $(pwd)/report/report-${{ env.current_date }}/index.html
       - 
         name: Install JQ
+        if: success() || failure()
         run: sudo apt-get install jq
       - 
         name: Update Reports JSON
+        if: success() || failure()
         run: |
               # read the existing JSON content
               json=$(curl -s "https://hbpmedical.github.io/pytest-mip/reports.json")
