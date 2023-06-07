@@ -72,10 +72,10 @@ function createReportTableHeader() {
   linkHeader.setAttribute("rowspan", "2");
   headerRow.appendChild(linkHeader);
   // Append the overall status to the table head
-  const statusHeader = document.createElement("th");
-  statusHeader.innerHTML = "Overall Status";
-  statusHeader.setAttribute("rowspan", "2");
-  headerRow.appendChild(statusHeader);
+  // const statusHeader = document.createElement("th");
+  // statusHeader.innerHTML = "Overall Status";
+  // statusHeader.setAttribute("rowspan", "2");
+  // headerRow.appendChild(statusHeader);
   // Append the federation name to the table head
   const federationHeaderTitle = document.createElement("th");
   federationHeaderTitle.innerHTML = "Federation Status";
@@ -124,13 +124,13 @@ async function createReportTableRow(report) {
   linkCell.appendChild(link);
   row.appendChild(linkCell);
   // Append the overall status
-  const statusCell = document.createElement("td");
-  if (report.status === "0") {
-    statusCell.innerHTML = '<span style="color: green">&#10004;</span>';
-  } else {
-    statusCell.innerHTML = '<span style="color: red">&#9747;</span>';
-  }
-  row.appendChild(statusCell);
+  // const statusCell = document.createElement("td");
+  // if (report.status === "0") {
+  //   statusCell.innerHTML = '<span style="color: green">&#10004;</span>';
+  // } else {
+  //   statusCell.innerHTML = '<span style="color: red">&#9747;</span>';
+  // }
+  // row.appendChild(statusCell);
   // Parse the JUnit XML report file to show status of each federation
   if (report.junitxml) {
     console.log("Read JUnitXML report: ", report.junitxml);
