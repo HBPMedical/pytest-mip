@@ -63,3 +63,7 @@ Here is a list of `<fed_name>` / filename pairs for the different federations th
 * `qa_federation` : `test_qa_federation.py`
 * `public_mip` : `test_public_mip.py`
 * ...
+
+## Funding
+
+This project received funding from the European Union's H2020 Framework Programme for Research and Innovation under the Specific Grant Agreement No. 945539 (Human Brain Project SGA3, as part the Medical Informatics Platform (MIP)).
