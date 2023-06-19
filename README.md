@@ -1,6 +1,6 @@
 # `pytest-mip`: Pytest and Selenium -based integration testing and reporting of the up-and-running MIP federations
 
-[![MIP Federation Integration Tests Pipeline](https://github.com/HBPMedical/pytest-mip/actions/workflows/build-test-report.yml/badge.svg)](https://github.com/HBPMedical/pytest-mip/actions/workflows/build-test-report.yml) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7801387.svg)](https://doi.org/10.5281/zenodo.7801387)
+![Latest GitHub Release](https://img.shields.io/github/v/release/HBPMedical/pytest-mip) ![Latest GitHub Release Date](https://img.shields.io/github/release-date/HBPMedical/pytest-mip) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7801387.svg)](https://doi.org/10.5281/zenodo.7801387) [![MIP Federation Integration Tests Pipeline](https://github.com/HBPMedical/pytest-mip/actions/workflows/build-test-report.yml/badge.svg)](https://github.com/HBPMedical/pytest-mip/actions/workflows/build-test-report.yml)
 
 This open-source project is developed for testing and reporting the status of the up-and-running federations of the MIP.
 
