@@ -10,6 +10,7 @@
 const FEDERATION_URL_NAME_MAPPING = {
   "test_data[https://hbpmip.link/]": "Public",
   "test_data[https://qa.hbpmip.link/]": "QA",
+  "test_data[https://stroke.hbpmip.link/]": "Stroke",
 };
 
 /**
