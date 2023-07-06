@@ -67,9 +67,50 @@ Here is a list of `<fed_name>` / filename pairs for the different federations th
 
 ## Want to add tests for a new MIP federation?
 
-To facilitate this process, the template file [`test_federation.py.template`](tests/test_federation.py.template) has been created. Please check out the notes of its heading docstring, which provides you with detailed guidelines.
+To facilitate this process, the template file [`test_federation.py.template`](tests/test_federation.py.template) has been created.
+This can be achieved by following the steps below.
+
+1. Start by creating a dedicated branch from the `main` branch:
+
+   ```bash
+   $ git checkout main
+   $ git pull origin
+   $ git checkout -b <NAME_OF_YOUR_BRANCH>
+   ```
+
+2. Copy the template file to `tests/test_<NEW_FEDERATION_NAME>_federation.py`, where `<NEW_FEDERATION_NAME>` is the name of your new federation (e.g. `qa`), and customize it as follows:
+
+    * Update the `FEDERATION_URL` variable below with the URL of the federation to test.
+    * Update the class name to `TestMIP<NEW_FEDERATION_NAME>Federation` (e.g. `TestMIPQAFederation`)
+    * Replace all occurrences of `<NEW_FEDERATION_NAME>` with the name of the federation to test.
+    * Re-implement the `test_data()` method to test the data of the federation.
+      The original `test_data()` method of the parent class can be found in [`tests/basetest.py`](tests/basetest.py) and be used an example.
+    * Edit this docstring, introduce the test of the federation, replace `<NEW_FEDERATION_NAME>`
+      with the name of the federation to test, replace information about authorship and
+      creation / modification dates.
+    * Remove the notes from the docstring, which provides you with the same detailed guidelines.
+
+3. Test the test locally. This can be achieved as follows in the `tests/` folder of the cloned repository:
+  
+  ```bash
+  $ cd tests/
+  $ sh ../entrypoint.sh test_<NEW_FEDERATION_NAME>_federation.py
+  ```
+
+4. When the tests passed and you are satisfied of the results, put the file on stage (e.g. `git add tests/test_<NEW_FEDERATION_NAME>_federation.py`), and make a commit with a message compliant to the Angular conventional commits definition (Please check [here](https://www.conventionalcommits.org/en/v1.0.0-beta.4/)) such as `feat: add new <NEW_FEDERATION_NAME> test`.
+5. Update the list of tested federations in the README. Put the file on stage (e.g. `git add README`) and make commit with message similar to `docs(README): update list of federation with the new <NEW_FEDERATION> federation`.
+6. Update the `FEDERATION_URL_NAME_MAPPING` object in `report/js/reports-parser.js` with a new entry corresponding to the federation. Put the file on stage (e.g. `git add report/js/reports-parser.js`) and make commit with a message similar to `feat(reports-parser.js): update mapping with new entry for the <NEW_FEDERATION> federation`.
+7. Push the branch to GitHub and open a Pull Request (target: `main` branch).
+8. Review a last time the changes summarized in the PR Changes tab
+9. Merge and close the PR
+10. Make a new release following the previous release description as example. 
+
+
+
 
 ### Additional notes
+
+* 
 
 * It is recommended to use `Chrome` with the [`SelectorHubs`](https://chrome.google.com/webstore/detail/selectorshub/ndgimibanhlabgdgjcpbbndiehljcpfh) extension to obtain absolute XPATHs.
 
