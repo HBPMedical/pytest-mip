@@ -62,6 +62,7 @@ You can run the following command to test a specific federation:
 Here is a list of `<fed_name>` / filename pairs for the different federations that are now available:
 * `qa_federation` : `test_qa_federation.py`
 * `public_mip` : `test_public_mip.py`
+* `stroke_federation` : `test_stroke_federation.py` 
 * ...
 
 ## Funding
