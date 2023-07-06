@@ -1,0 +1,44 @@
+import pytest
+from basetest import BaseMIPFederationTest
+
+
+"""
+This pytest test is dedicated to interactively test the MIP <FEDERATION_NAME> federation.
+
+    Project: Tests of the MIP federations
+    Test: <FEDERATION_NAME>
+    Created by: Sebastien Tourbier (sebastien.tourbier@chuv.ch)
+    Created on 06/07/2023
+    Modified by: Sebastien Tourbier (sebastien.tourbier@chuv.ch)
+    Last modification: 06/07/2023
+
+Note:
+
+This pytest test has been created for the purpose of testing a new federation.
+
+Copy this file to tests/test_<FEDERATION_NAME>_federation.py and customize it as follows:
+
+* Update the FEDERATION_URL variable below with the URL of the federation to test.
+* Update the class name to TestMIP<FEDERATION_NAME>Federation (e.g. TestMIPQAFederation)
+* Replace all occurrences of <FEDERATION_NAME> with the name of the federation to test.
+* Re-implement the test_data() method to test the data of the federation.
+  The original test_data() method can be found in basetest.py and be used an example.
+* Edit this docstring, introduce the test of the federation, replace <FEDERATION_NAME>
+  with the name of the federation to test, replace information about authorship and
+  creation / modification dates.
+* Remove this note.
+
+"""
+
+FEDERATION_URL = "https://<FEDERATION_URL>/"
+
+
+@pytest.mark.parametrize("selenium_driver", [FEDERATION_URL], indirect=True)
+class TestTemplateMIP(BaseMIPFederationTest):
+    def test_login_and_accept_terms(self):
+        """Test login and accept terms on the <FEDERATION_NAME> MIP."""
+        super().test_login_and_accept_terms()
+
+    def test_data(self):
+        """Integration tests (data) of the <FEDERATION_NAME> MIP."""
+        super().test_data()
