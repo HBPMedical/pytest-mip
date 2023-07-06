@@ -105,14 +105,9 @@ This can be achieved by following the steps below.
 9. Merge and close the PR
 10. Make a new release following the previous release description as example. 
 
-
-
-
 ### Additional notes
 
-* 
-
-* It is recommended to use `Chrome` with the [`SelectorHubs`](https://chrome.google.com/webstore/detail/selectorshub/ndgimibanhlabgdgjcpbbndiehljcpfh) extension to obtain absolute XPATHs.
+* It is recommended to use `Chrome` with the [`SelectorHubs`](https://chrome.google.com/webstore/detail/selectorshub/ndgimibanhlabgdgjcpbbndiehljcpfh) extension to determine absolute XPATHs that are used by Selenium to get the different web page elements.
 
 * It is possible to test a specific federation test locally. This can be achieved as follows in the repository's directory:
   
