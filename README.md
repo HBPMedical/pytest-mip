@@ -65,6 +65,20 @@ Here is a list of `<fed_name>` / filename pairs for the different federations th
 * `stroke_federation` : `test_stroke_federation.py` 
 * ...
 
+## Want to add tests for a new MIP federation?
+
+To facilitate this process, the template file [`test_federation.py.template`](tests/test_federation.py.template) has been created. Please check out the notes of its heading docstring, which provides you with detailed guidelines.
+
+### Additional notes
+
+* It is recommended to use `Chrome` with the [`SelectorHubs`](https://chrome.google.com/webstore/detail/selectorshub/ndgimibanhlabgdgjcpbbndiehljcpfh) extension to obtain absolute XPATHs.
+
+* It is possible to test a specific federation test locally. This can be achieved as follows in the repository's directory:
+  
+  ```bash
+  $ cd tests/
+  $ sh ../entrypoint.sh test_<NEW_FEDERATION_NAME>.py
+  ```
 ## Funding
 
 This project received funding from the European Union's H2020 Framework Programme for Research and Innovation under the Specific Grant Agreement No. 945539 (Human Brain Project SGA3, as part the Medical Informatics Platform (MIP)).
