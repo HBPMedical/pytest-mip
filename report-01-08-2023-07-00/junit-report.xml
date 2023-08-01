@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="6" failures="0" skipped="0" tests="6" time="1.850" timestamp="2023-08-01T07:00:21.390973" hostname="700adf0fabc1"><testcase classname="test_public_mip.TestPublicMIP" name="test_login_and_accept_terms[https://hbpmip.link/]" time="0.598"><error message="failed on setup with &quot;ValueError: There is no such driver by url https://chromedriver.storage.googleapis.com/115.0.5790/chromedriver_linux64.zip&quot;">request = &lt;SubRequest 'selenium_driver' for &lt;Function test_login_and_accept_terms[https://hbpmip.link/]&gt;&gt;
+
+    @pytest.fixture(scope="class")
+    def selenium_driver(request):
+        """Set up selenium chrome webdriver fixture."""
+        _driver = webdriver.Chrome(
+&gt;           service=Service(ChromeDriverManager().install()), options=set_chrome_options()
+        )
+
+conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/local/lib/python3.9/site-packages/webdriver_manager/chrome.py:39: in install
+    driver_path = self._get_driver_path(self.driver)
+/usr/local/lib/python3.9/site-packages/webdriver_manager/core/manager.py:30: in _get_driver_path
+    file = self._download_manager.download_file(driver.get_url())
+/usr/local/lib/python3.9/site-packages/webdriver_manager/core/download_manager.py:28: in download_file
+    response = self._http_client.get(url)
+/usr/local/lib/python3.9/site-packages/webdriver_manager/core/http.py:33: in get
+    self.validate_response(resp)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+resp = &lt;Response [404]&gt;
+
+    @staticmethod
+    def validate_response(resp: requests.Response):
+        status_code = resp.status_code
+        if status_code == 404:
+&gt;           raise ValueError(f"There is no such driver by url {resp.url}")
+E           ValueError: There is no such driver by url https://chromedriver.storage.googleapis.com/115.0.5790/chromedriver_linux64.zip
+
+/usr/local/lib/python3.9/site-packages/webdriver_manager/core/http.py:16: ValueError</error></testcase><testcase classname="test_public_mip.TestPublicMIP" name="test_data[https://hbpmip.link/]" time="0.001"><error message="failed on setup with &quot;ValueError: There is no such driver by url https://chromedriver.storage.googleapis.com/115.0.5790/chromedriver_linux64.zip&quot;">request = &lt;SubRequest 'selenium_driver' for &lt;Function test_login_and_accept_terms[https://hbpmip.link/]&gt;&gt;
+
+    @pytest.fixture(scope="class")
+    def selenium_driver(request):
+        """Set up selenium chrome webdriver fixture."""
+        _driver = webdriver.Chrome(
+&gt;           service=Service(ChromeDriverManager().install()), options=set_chrome_options()
+        )
+
+conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/local/lib/python3.9/site-packages/webdriver_manager/chrome.py:39: in install
+    driver_path = self._get_driver_path(self.driver)
+/usr/local/lib/python3.9/site-packages/webdriver_manager/core/manager.py:30: in _get_driver_path
+    file = self._download_manager.download_file(driver.get_url())
+/usr/local/lib/python3.9/site-packages/webdriver_manager/core/download_manager.py:28: in download_file
+    response = self._http_client.get(url)
+/usr/local/lib/python3.9/site-packages/webdriver_manager/core/http.py:33: in get
+    self.validate_response(resp)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+resp = &lt;Response [404]&gt;
+
+    @staticmethod
+    def validate_response(resp: requests.Response):
+        status_code = resp.status_code
+        if status_code == 404:
+&gt;           raise ValueError(f"There is no such driver by url {resp.url}")
+E           ValueError: There is no such driver by url https://chromedriver.storage.googleapis.com/115.0.5790/chromedriver_linux64.zip
+
+/usr/local/lib/python3.9/site-packages/webdriver_manager/core/http.py:16: ValueError</error></testcase><testcase classname="test_qa_federation.TestMIPQAFederation" name="test_login_and_accept_terms[https://qa.hbpmip.link/]" time="0.580"><error message="failed on setup with &quot;ValueError: There is no such driver by url https://chromedriver.storage.googleapis.com/115.0.5790/chromedriver_linux64.zip&quot;">request = &lt;SubRequest 'selenium_driver' for &lt;Function test_login_and_accept_terms[https://qa.hbpmip.link/]&gt;&gt;
+
+    @pytest.fixture(scope="class")
+    def selenium_driver(request):
+        """Set up selenium chrome webdriver fixture."""
+        _driver = webdriver.Chrome(
+&gt;           service=Service(ChromeDriverManager().install()), options=set_chrome_options()
+        )
+
+conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/local/lib/python3.9/site-packages/webdriver_manager/chrome.py:39: in install
+    driver_path = self._get_driver_path(self.driver)
+/usr/local/lib/python3.9/site-packages/webdriver_manager/core/manager.py:30: in _get_driver_path
+    file = self._download_manager.download_file(driver.get_url())
+/usr/local/lib/python3.9/site-packages/webdriver_manager/core/download_manager.py:28: in download_file
+    response = self._http_client.get(url)
+/usr/local/lib/python3.9/site-packages/webdriver_manager/core/http.py:33: in get
+    self.validate_response(resp)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+resp = &lt;Response [404]&gt;
+
+    @staticmethod
+    def validate_response(resp: requests.Response):
+        status_code = resp.status_code
+        if status_code == 404:
+&gt;           raise ValueError(f"There is no such driver by url {resp.url}")
+E           ValueError: There is no such driver by url https://chromedriver.storage.googleapis.com/115.0.5790/chromedriver_linux64.zip
+
+/usr/local/lib/python3.9/site-packages/webdriver_manager/core/http.py:16: ValueError</error></testcase><testcase classname="test_qa_federation.TestMIPQAFederation" name="test_data[https://qa.hbpmip.link/]" time="0.000"><error message="failed on setup with &quot;ValueError: There is no such driver by url https://chromedriver.storage.googleapis.com/115.0.5790/chromedriver_linux64.zip&quot;">request = &lt;SubRequest 'selenium_driver' for &lt;Function test_login_and_accept_terms[https://qa.hbpmip.link/]&gt;&gt;
+
+    @pytest.fixture(scope="class")
+    def selenium_driver(request):
+        """Set up selenium chrome webdriver fixture."""
+        _driver = webdriver.Chrome(
+&gt;           service=Service(ChromeDriverManager().install()), options=set_chrome_options()
+        )
+
+conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/local/lib/python3.9/site-packages/webdriver_manager/chrome.py:39: in install
+    driver_path = self._get_driver_path(self.driver)
+/usr/local/lib/python3.9/site-packages/webdriver_manager/core/manager.py:30: in _get_driver_path
+    file = self._download_manager.download_file(driver.get_url())
+/usr/local/lib/python3.9/site-packages/webdriver_manager/core/download_manager.py:28: in download_file
+    response = self._http_client.get(url)
+/usr/local/lib/python3.9/site-packages/webdriver_manager/core/http.py:33: in get
+    self.validate_response(resp)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+resp = &lt;Response [404]&gt;
+
+    @staticmethod
+    def validate_response(resp: requests.Response):
+        status_code = resp.status_code
+        if status_code == 404:
+&gt;           raise ValueError(f"There is no such driver by url {resp.url}")
+E           ValueError: There is no such driver by url https://chromedriver.storage.googleapis.com/115.0.5790/chromedriver_linux64.zip
+
+/usr/local/lib/python3.9/site-packages/webdriver_manager/core/http.py:16: ValueError</error></testcase><testcase classname="test_stroke_federation.TestStrokeMIP" name="test_login_and_accept_terms[https://stroke.hbpmip.link/]" time="0.533"><error message="failed on setup with &quot;ValueError: There is no such driver by url https://chromedriver.storage.googleapis.com/115.0.5790/chromedriver_linux64.zip&quot;">request = &lt;SubRequest 'selenium_driver' for &lt;Function test_login_and_accept_terms[https://stroke.hbpmip.link/]&gt;&gt;
+
+    @pytest.fixture(scope="class")
+    def selenium_driver(request):
+        """Set up selenium chrome webdriver fixture."""
+        _driver = webdriver.Chrome(
+&gt;           service=Service(ChromeDriverManager().install()), options=set_chrome_options()
+        )
+
+conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/local/lib/python3.9/site-packages/webdriver_manager/chrome.py:39: in install
+    driver_path = self._get_driver_path(self.driver)
+/usr/local/lib/python3.9/site-packages/webdriver_manager/core/manager.py:30: in _get_driver_path
+    file = self._download_manager.download_file(driver.get_url())
+/usr/local/lib/python3.9/site-packages/webdriver_manager/core/download_manager.py:28: in download_file
+    response = self._http_client.get(url)
+/usr/local/lib/python3.9/site-packages/webdriver_manager/core/http.py:33: in get
+    self.validate_response(resp)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+resp = &lt;Response [404]&gt;
+
+    @staticmethod
+    def validate_response(resp: requests.Response):
+        status_code = resp.status_code
+        if status_code == 404:
+&gt;           raise ValueError(f"There is no such driver by url {resp.url}")
+E           ValueError: There is no such driver by url https://chromedriver.storage.googleapis.com/115.0.5790/chromedriver_linux64.zip
+
+/usr/local/lib/python3.9/site-packages/webdriver_manager/core/http.py:16: ValueError</error></testcase><testcase classname="test_stroke_federation.TestStrokeMIP" name="test_data[https://stroke.hbpmip.link/]" time="0.001"><error message="failed on setup with &quot;ValueError: There is no such driver by url https://chromedriver.storage.googleapis.com/115.0.5790/chromedriver_linux64.zip&quot;">request = &lt;SubRequest 'selenium_driver' for &lt;Function test_login_and_accept_terms[https://stroke.hbpmip.link/]&gt;&gt;
+
+    @pytest.fixture(scope="class")
+    def selenium_driver(request):
+        """Set up selenium chrome webdriver fixture."""
+        _driver = webdriver.Chrome(
+&gt;           service=Service(ChromeDriverManager().install()), options=set_chrome_options()
+        )
+
+conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/local/lib/python3.9/site-packages/webdriver_manager/chrome.py:39: in install
+    driver_path = self._get_driver_path(self.driver)
+/usr/local/lib/python3.9/site-packages/webdriver_manager/core/manager.py:30: in _get_driver_path
+    file = self._download_manager.download_file(driver.get_url())
+/usr/local/lib/python3.9/site-packages/webdriver_manager/core/download_manager.py:28: in download_file
+    response = self._http_client.get(url)
+/usr/local/lib/python3.9/site-packages/webdriver_manager/core/http.py:33: in get
+    self.validate_response(resp)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+resp = &lt;Response [404]&gt;
+
+    @staticmethod
+    def validate_response(resp: requests.Response):
+        status_code = resp.status_code
+        if status_code == 404:
+&gt;           raise ValueError(f"There is no such driver by url {resp.url}")
+E           ValueError: There is no such driver by url https://chromedriver.storage.googleapis.com/115.0.5790/chromedriver_linux64.zip
+
+/usr/local/lib/python3.9/site-packages/webdriver_manager/core/http.py:16: ValueError</error></testcase></testsuite></testsuites>
