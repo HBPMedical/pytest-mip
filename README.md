@@ -101,9 +101,9 @@ This can be achieved by following the steps below.
 5. Update the list of tested federations in the README. Put the file on stage (e.g. `git add README`) and make commit with message similar to `docs(README): update list of federation with the new <NEW_FEDERATION> federation`.
 6. Update the `FEDERATION_URL_NAME_MAPPING` object in `report/js/reports-parser.js` with a new entry corresponding to the federation. Put the file on stage (e.g. `git add report/js/reports-parser.js`) and make commit with a message similar to `feat(reports-parser.js): update mapping with new entry for the <NEW_FEDERATION> federation`.
 7. Push the branch to GitHub and open a Pull Request (target: `main` branch).
-8. Review a last time the changes summarized in the PR Changes tab
-9. Ask for review
-9. Once PR is approved, merge and close the PR
+8. Review a last time the changes summarized in the PR Changes tab.
+9. Ask for review.
+9. Once PR is approved, merge and close the PR.
 10. Make a new release following the previous release description as example. 
 
 ### Additional notes
@@ -157,24 +157,24 @@ This project contains the following files and folders:
 
 -   ``.zenodo.json``: Metadata for publication of `pytest-mip` to Zenodo, which includes among others the list of authors.
 
--   ``.github/workflows/build-test-report.yml``: GitHub Action workflow to build the Docker container image, run the tests, generate and deploy the report. It consists of several "so-called" stages that are presented in the diagram below.
+-   ``.github/workflows/build-test-report.yml``: Describe the GitHub Action workflow that builds the Docker container image, runs the tests, generates and deploys the report to GitHub Page. It consists of several "so-called" stages that are presented in the diagram below.
 
     ```mermaid
     graph TB
-    A["Checkout"]
-    B["Set up Docker Buildx"]
-    C[Install JQ]
-    D["Setup project parameters"]
-    E[Build and push]
-    E[Get current date]
-    F[Run integration tests of<br>the up-and-running MIP federations]
-    G{Success?}
-    H["Update Reports JSON (SUCCESS)"]
-    I["Update Reports JSON (FAILURE)"]
-    J[Deploy report to GitHub Page]
-    A --> B --> C --> D --> E --> F --> G
-    G -->|YES| H --> J
-    G -->|NO| I --> J
+    A["Checkout"] ~~~|"Checkout the GitHub repository"| A
+    B["Set up Docker Buildx"] ~~~|"Use GitHub Action docker/setup-buildx-action<br>to set up Docker Buildx"| B
+    C[Install JQ] ~~~|"Install JQ, a package to manipulate JSON files"| C
+    D["Setup project parameters"] ~~~|"Set the variables UserID and UserPWD<br>from the project environment variables<br>$EBRAINSUSERID and $EBRAINSUSERPWD"| D
+    E[Build and push] ~~~|"Use GitHub Action docker/build-push-action<br>to build the Docker image"| E
+    F[Get current date] ~~~|"Get the current date to use<br>in the generation of folder and file names<br>to store the reports"| F
+    G[Run integration tests of<br>the up-and-running MIP federations] ~~~|"Run the tests with the built Docker image"| G
+    H{Success?}
+    I["Update Reports JSON (SUCCESS)"]
+    J["Update Reports JSON (FAILURE)"] ~~~|"Add item to the reports.json<br>describing the test date, link to its report,<br>and different test status"| J
+    K[Deploy report to GitHub Page] ~~~|"Deploy the reporting website<br>with updated content to<br>hbpmedical.github.io/pytest-mip"| K
+    A --> B --> C --> D --> E --> F --> G --> H
+    H -->|YES| I --> K
+    H -->|NO| J --> K
     ```
 
 ## Funding
