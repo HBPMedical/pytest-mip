@@ -20,6 +20,10 @@ jobs:
       -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
+      - 
+        name: Install JQ
+        if: success() || failure()
+        run: sudo apt-get install jq
       -
         name: Setup project parameters
         run: |
@@ -51,15 +55,7 @@ jobs:
         run: |
           mkdir -p report/report-${{ env.current_date }}
           docker run -v $(pwd)/report/report-${{ env.current_date }}:/app/report -t pytest_mip .
-      -
-        name: Rename report.html to index.html for GitHub Page
-        if: success() || failure()
-        run: |
           mv $(pwd)/report/report-${{ env.current_date }}/report.html $(pwd)/report/report-${{ env.current_date }}/index.html
-      - 
-        name: Install JQ
-        if: success() || failure()
-        run: sudo apt-get install jq
       - 
         name: Update Reports JSON (SUCCESS)
         if: success()
