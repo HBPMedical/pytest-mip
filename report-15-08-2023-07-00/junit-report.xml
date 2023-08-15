@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="6" time="89.105" timestamp="2023-08-15T07:00:13.287915" hostname="afccb3c5a87a"><testcase classname="test_public_mip.TestPublicMIP" name="test_login_and_accept_terms[https://hbpmip.link/]" time="34.736" /><testcase classname="test_public_mip.TestPublicMIP" name="test_data[https://hbpmip.link/]" time="1.846"><failure message="selenium.common.exceptions.ElementClickInterceptedException: Message: element click intercepted: Element &lt;button id=&quot;dropdown-basic&quot; type=&quot;button&quot; class=&quot;sc-jOrMOR chPCix btn btn-light btn-sm&quot;&gt;...&lt;/button&gt; is not clickable at point (208, 82). Other element would receive the click: &lt;div role=&quot;dialog&quot; aria-modal=&quot;true&quot; class=&quot;fade modal&quot; tabindex=&quot;-1&quot; style=&quot;display: block;&quot;&gt;...&lt;/div&gt;&#10;  (Session info: headless chrome=115.0.5790.170)&#10;Stacktrace:&#10;#0 0x564193ac2613 &lt;unknown&gt;&#10;#1 0x5641937ee537 &lt;unknown&gt;&#10;#2 0x564193832af2 &lt;unknown&gt;&#10;#3 0x564193831044 &lt;unknown&gt;&#10;#4 0x56419382ef68 &lt;unknown&gt;&#10;#5 0x56419382e0ad &lt;unknown&gt;&#10;#6 0x5641938231a9 &lt;unknown&gt;&#10;#7 0x56419384da32 &lt;unknown&gt;&#10;#8 0x564193822bc6 &lt;unknown&gt;&#10;#9 0x56419384dbfe &lt;unknown&gt;&#10;#10 0x564193865d09 &lt;unknown&gt;&#10;#11 0x56419384d803 &lt;unknown&gt;&#10;#12 0x56419382168b &lt;unknown&gt;&#10;#13 0x56419382242e &lt;unknown&gt;&#10;#14 0x564193a83c28 &lt;unknown&gt;&#10;#15 0x564193a87af7 &lt;unknown&gt;&#10;#16 0x564193a9201c &lt;unknown&gt;&#10;#17 0x564193a88723 &lt;unknown&gt;&#10;#18 0x564193a57457 &lt;unknown&gt;&#10;#19 0x564193aac628 &lt;unknown&gt;&#10;#20 0x564193aac7b7 &lt;unknown&gt;&#10;#21 0x564193abb483 &lt;unknown&gt;&#10;#22 0x7f5f0b0c7044 &lt;unknown&gt;">self = &lt;test_public_mip.TestPublicMIP object at 0x7f491ed40b20&gt;
+
+    def test_data(self):
+        """Integration tests (data) of the public MIP."""
+&gt;       super().test_data()
+
+test_public_mip.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+basetest.py:78: in test_data
+    datasets.click()
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/webelement.py:94: in click
+    self._execute(Command.CLICK_ELEMENT)
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/webelement.py:395: in _execute
+    return self._parent.execute(command, params)
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py:345: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;selenium.webdriver.remote.errorhandler.ErrorHandler object at 0x7f491eceec70&gt;
+response = {'status': 400, 'value': '{"value":{"error":"element click intercepted","message":"element click intercepted: Element ...\\n#20 0x564193aac7b7 \\u003Cunknown&gt;\\n#21 0x564193abb483 \\u003Cunknown&gt;\\n#22 0x7f5f0b0c7044 \\u003Cunknown&gt;\\n"}}'}
+
+    def check_response(self, response: Dict[str, Any]) -&gt; None:
+        """Checks that a JSON response from the WebDriver does not have an
+        error.
+    
+        :Args:
+         - response - The JSON response from the WebDriver server as a dictionary
+           object.
+    
+        :Raises: If the response contains an error message.
+        """
+        status = response.get("status", None)
+        if not status or status == ErrorCode.SUCCESS:
+            return
+        value = None
+        message = response.get("message", "")
+        screen: str = response.get("screen", "")
+        stacktrace = None
+        if isinstance(status, int):
+            value_json = response.get("value", None)
+            if value_json and isinstance(value_json, str):
+                import json
+    
+                try:
+                    value = json.loads(value_json)
+                    if len(value) == 1:
+                        value = value["value"]
+                    status = value.get("error", None)
+                    if not status:
+                        status = value.get("status", ErrorCode.UNKNOWN_ERROR)
+                        message = value.get("value") or value.get("message")
+                        if not isinstance(message, str):
+                            value = message
+                            message = message.get("message")
+                    else:
+                        message = value.get("message", None)
+                except ValueError:
+                    pass
+    
+        exception_class: Type[WebDriverException]
+        e = ErrorCode()
+        error_codes = [item for item in dir(e) if not item.startswith("__")]
+        for error_code in error_codes:
+            error_info = getattr(ErrorCode, error_code)
+            if isinstance(error_info, list) and status in error_info:
+                exception_class = getattr(ExceptionMapping, error_code, WebDriverException)
+                break
+        else:
+            exception_class = WebDriverException
+    
+        if not value:
+            value = response["value"]
+        if isinstance(value, str):
+            raise exception_class(value)
+        if message == "" and "message" in value:
+            message = value["message"]
+    
+        screen = None  # type: ignore[assignment]
+        if "screen" in value:
+            screen = value["screen"]
+    
+        stacktrace = None
+        st_value = value.get("stackTrace") or value.get("stacktrace")
+        if st_value:
+            if isinstance(st_value, str):
+                stacktrace = st_value.split("\n")
+            else:
+                stacktrace = []
+                try:
+                    for frame in st_value:
+                        line = frame.get("lineNumber", "")
+                        file = frame.get("fileName", "&lt;anonymous&gt;")
+                        if line:
+                            file = f"{file}:{line}"
+                        meth = frame.get("methodName", "&lt;anonymous&gt;")
+                        if "className" in frame:
+                            meth = f"{frame['className']}.{meth}"
+                        msg = "    at %s (%s)"
+                        msg = msg % (meth, file)
+                        stacktrace.append(msg)
+                except TypeError:
+                    pass
+        if exception_class == UnexpectedAlertPresentException:
+            alert_text = None
+            if "data" in value:
+                alert_text = value["data"].get("text")
+            elif "alert" in value:
+                alert_text = value["alert"].get("text")
+            raise exception_class(message, screen, stacktrace, alert_text)  # type: ignore[call-arg]  # mypy is not smart enough here
+&gt;       raise exception_class(message, screen, stacktrace)
+E       selenium.common.exceptions.ElementClickInterceptedException: Message: element click intercepted: Element &lt;button id="dropdown-basic" type="button" class="sc-jOrMOR chPCix btn btn-light btn-sm"&gt;...&lt;/button&gt; is not clickable at point (208, 82). Other element would receive the click: &lt;div role="dialog" aria-modal="true" class="fade modal" tabindex="-1" style="display: block;"&gt;...&lt;/div&gt;
+E         (Session info: headless chrome=115.0.5790.170)
+E       Stacktrace:
+E       #0 0x564193ac2613 &lt;unknown&gt;
+E       #1 0x5641937ee537 &lt;unknown&gt;
+E       #2 0x564193832af2 &lt;unknown&gt;
+E       #3 0x564193831044 &lt;unknown&gt;
+E       #4 0x56419382ef68 &lt;unknown&gt;
+E       #5 0x56419382e0ad &lt;unknown&gt;
+E       #6 0x5641938231a9 &lt;unknown&gt;
+E       #7 0x56419384da32 &lt;unknown&gt;
+E       #8 0x564193822bc6 &lt;unknown&gt;
+E       #9 0x56419384dbfe &lt;unknown&gt;
+E       #10 0x564193865d09 &lt;unknown&gt;
+E       #11 0x56419384d803 &lt;unknown&gt;
+E       #12 0x56419382168b &lt;unknown&gt;
+E       #13 0x56419382242e &lt;unknown&gt;
+E       #14 0x564193a83c28 &lt;unknown&gt;
+E       #15 0x564193a87af7 &lt;unknown&gt;
+E       #16 0x564193a9201c &lt;unknown&gt;
+E       #17 0x564193a88723 &lt;unknown&gt;
+E       #18 0x564193a57457 &lt;unknown&gt;
+E       #19 0x564193aac628 &lt;unknown&gt;
+E       #20 0x564193aac7b7 &lt;unknown&gt;
+E       #21 0x564193abb483 &lt;unknown&gt;
+E       #22 0x7f5f0b0c7044 &lt;unknown&gt;
+
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/errorhandler.py:229: ElementClickInterceptedException</failure></testcase><testcase classname="test_qa_federation.TestMIPQAFederation" name="test_login_and_accept_terms[https://qa.hbpmip.link/]" time="9.419" /><testcase classname="test_qa_federation.TestMIPQAFederation" name="test_data[https://qa.hbpmip.link/]" time="23.399" /><testcase classname="test_stroke_federation.TestStrokeMIP" name="test_login_and_accept_terms[https://stroke.hbpmip.link/]" time="9.347" /><testcase classname="test_stroke_federation.TestStrokeMIP" name="test_data[https://stroke.hbpmip.link/]" time="9.876" /></testsuite></testsuites>
