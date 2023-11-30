@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="6" time="161.670" timestamp="2023-11-30T06:59:55.716390" hostname="831d32cdeba9"><testcase classname="test_public_mip.TestPublicMIP" name="test_login_and_accept_terms[https://hbpmip.link/]" time="30.428" /><testcase classname="test_public_mip.TestPublicMIP" name="test_data[https://hbpmip.link/]" time="24.046"><failure message="selenium.common.exceptions.NoSuchElementException: Message: no such element: Unable to locate element: {&quot;method&quot;:&quot;xpath&quot;,&quot;selector&quot;:&quot;//*[name()='circle'][. = 'Left opercular part of the inferior frontal gyrus&#10;']&quot;}&#10;  (Session info: headless chrome=119.0.6045.159); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception&#10;Stacktrace:&#10;#0 0x564a3c04d5e3 &lt;unknown&gt;&#10;#1 0x564a3bd100b7 &lt;unknown&gt;&#10;#2 0x564a3bd5df53 &lt;unknown&gt;&#10;#3 0x564a3bd5e051 &lt;unknown&gt;&#10;#4 0x564a3bda39c4 &lt;unknown&gt;&#10;#5 0x564a3bd84f1d &lt;unknown&gt;&#10;#6 0x564a3bda0b3d &lt;unknown&gt;&#10;#7 0x564a3bd84cc3 &lt;unknown&gt;&#10;#8 0x564a3bd500e4 &lt;unknown&gt;&#10;#9 0x564a3bd510ae &lt;unknown&gt;&#10;#10 0x564a3c013ce1 &lt;unknown&gt;&#10;#11 0x564a3c017b7e &lt;unknown&gt;&#10;#12 0x564a3c0014b5 &lt;unknown&gt;&#10;#13 0x564a3c0187d6 &lt;unknown&gt;&#10;#14 0x564a3bfe4dbf &lt;unknown&gt;&#10;#15 0x564a3c03b748 &lt;unknown&gt;&#10;#16 0x564a3c03b917 &lt;unknown&gt;&#10;#17 0x564a3c04c773 &lt;unknown&gt;&#10;#18 0x7fe86395e044 &lt;unknown&gt;">self = &lt;test_public_mip.TestPublicMIP object at 0x7fdf21ef1af0&gt;
+
+    def test_data(self):
+        """Integration tests (data) of the public MIP."""
+&gt;       super().test_data()
+
+test_public_mip.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+basetest.py:106: in test_data
+    left_opercular_part_of_the_inferior_f_ = selenium_driver.find_element(
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py:739: in find_element
+    return self.execute(Command.FIND_ELEMENT, {"using": by, "value": value})["value"]
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py:345: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;selenium.webdriver.remote.errorhandler.ErrorHandler object at 0x7fdf20ecf280&gt;
+response = {'status': 404, 'value': '{"value":{"error":"no such element","message":"no such element: Unable to locate element: {\...\\n#16 0x564a3c03b917 \\u003Cunknown&gt;\\n#17 0x564a3c04c773 \\u003Cunknown&gt;\\n#18 0x7fe86395e044 \\u003Cunknown&gt;\\n"}}'}
+
+    def check_response(self, response: Dict[str, Any]) -&gt; None:
+        """Checks that a JSON response from the WebDriver does not have an
+        error.
+    
+        :Args:
+         - response - The JSON response from the WebDriver server as a dictionary
+           object.
+    
+        :Raises: If the response contains an error message.
+        """
+        status = response.get("status", None)
+        if not status or status == ErrorCode.SUCCESS:
+            return
+        value = None
+        message = response.get("message", "")
+        screen: str = response.get("screen", "")
+        stacktrace = None
+        if isinstance(status, int):
+            value_json = response.get("value", None)
+            if value_json and isinstance(value_json, str):
+                import json
+    
+                try:
+                    value = json.loads(value_json)
+                    if len(value) == 1:
+                        value = value["value"]
+                    status = value.get("error", None)
+                    if not status:
+                        status = value.get("status", ErrorCode.UNKNOWN_ERROR)
+                        message = value.get("value") or value.get("message")
+                        if not isinstance(message, str):
+                            value = message
+                            message = message.get("message")
+                    else:
+                        message = value.get("message", None)
+                except ValueError:
+                    pass
+    
+        exception_class: Type[WebDriverException]
+        e = ErrorCode()
+        error_codes = [item for item in dir(e) if not item.startswith("__")]
+        for error_code in error_codes:
+            error_info = getattr(ErrorCode, error_code)
+            if isinstance(error_info, list) and status in error_info:
+                exception_class = getattr(ExceptionMapping, error_code, WebDriverException)
+                break
+        else:
+            exception_class = WebDriverException
+    
+        if not value:
+            value = response["value"]
+        if isinstance(value, str):
+            raise exception_class(value)
+        if message == "" and "message" in value:
+            message = value["message"]
+    
+        screen = None  # type: ignore[assignment]
+        if "screen" in value:
+            screen = value["screen"]
+    
+        stacktrace = None
+        st_value = value.get("stackTrace") or value.get("stacktrace")
+        if st_value:
+            if isinstance(st_value, str):
+                stacktrace = st_value.split("\n")
+            else:
+                stacktrace = []
+                try:
+                    for frame in st_value:
+                        line = frame.get("lineNumber", "")
+                        file = frame.get("fileName", "&lt;anonymous&gt;")
+                        if line:
+                            file = f"{file}:{line}"
+                        meth = frame.get("methodName", "&lt;anonymous&gt;")
+                        if "className" in frame:
+                            meth = f"{frame['className']}.{meth}"
+                        msg = "    at %s (%s)"
+                        msg = msg % (meth, file)
+                        stacktrace.append(msg)
+                except TypeError:
+                    pass
+        if exception_class == UnexpectedAlertPresentException:
+            alert_text = None
+            if "data" in value:
+                alert_text = value["data"].get("text")
+            elif "alert" in value:
+                alert_text = value["alert"].get("text")
+            raise exception_class(message, screen, stacktrace, alert_text)  # type: ignore[call-arg]  # mypy is not smart enough here
+&gt;       raise exception_class(message, screen, stacktrace)
+E       selenium.common.exceptions.NoSuchElementException: Message: no such element: Unable to locate element: {"method":"xpath","selector":"//*[name()='circle'][. = 'Left opercular part of the inferior frontal gyrus
+E       ']"}
+E         (Session info: headless chrome=119.0.6045.159); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+E       Stacktrace:
+E       #0 0x564a3c04d5e3 &lt;unknown&gt;
+E       #1 0x564a3bd100b7 &lt;unknown&gt;
+E       #2 0x564a3bd5df53 &lt;unknown&gt;
+E       #3 0x564a3bd5e051 &lt;unknown&gt;
+E       #4 0x564a3bda39c4 &lt;unknown&gt;
+E       #5 0x564a3bd84f1d &lt;unknown&gt;
+E       #6 0x564a3bda0b3d &lt;unknown&gt;
+E       #7 0x564a3bd84cc3 &lt;unknown&gt;
+E       #8 0x564a3bd500e4 &lt;unknown&gt;
+E       #9 0x564a3bd510ae &lt;unknown&gt;
+E       #10 0x564a3c013ce1 &lt;unknown&gt;
+E       #11 0x564a3c017b7e &lt;unknown&gt;
+E       #12 0x564a3c0014b5 &lt;unknown&gt;
+E       #13 0x564a3c0187d6 &lt;unknown&gt;
+E       #14 0x564a3bfe4dbf &lt;unknown&gt;
+E       #15 0x564a3c03b748 &lt;unknown&gt;
+E       #16 0x564a3c03b917 &lt;unknown&gt;
+E       #17 0x564a3c04c773 &lt;unknown&gt;
+E       #18 0x7fe86395e044 &lt;unknown&gt;
+
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/errorhandler.py:229: NoSuchElementException</failure></testcase><testcase classname="test_qa_federation.TestMIPQAFederation" name="test_login_and_accept_terms[https://qa.hbpmip.link/]" time="28.286" /><testcase classname="test_qa_federation.TestMIPQAFederation" name="test_data[https://qa.hbpmip.link/]" time="23.589"><failure message="selenium.common.exceptions.NoSuchElementException: Message: no such element: Unable to locate element: {&quot;method&quot;:&quot;css selector&quot;,&quot;selector&quot;:&quot;#default-synth_mh_wk3&quot;}&#10;  (Session info: headless chrome=119.0.6045.159); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception&#10;Stacktrace:&#10;#0 0x561a18c715e3 &lt;unknown&gt;&#10;#1 0x561a189340b7 &lt;unknown&gt;&#10;#2 0x561a18981f53 &lt;unknown&gt;&#10;#3 0x561a18982051 &lt;unknown&gt;&#10;#4 0x561a189c79c4 &lt;unknown&gt;&#10;#5 0x561a189a8f1d &lt;unknown&gt;&#10;#6 0x561a189c4b3d &lt;unknown&gt;&#10;#7 0x561a189a8cc3 &lt;unknown&gt;&#10;#8 0x561a189740e4 &lt;unknown&gt;&#10;#9 0x561a189750ae &lt;unknown&gt;&#10;#10 0x561a18c37ce1 &lt;unknown&gt;&#10;#11 0x561a18c3bb7e &lt;unknown&gt;&#10;#12 0x561a18c254b5 &lt;unknown&gt;&#10;#13 0x561a18c3c7d6 &lt;unknown&gt;&#10;#14 0x561a18c08dbf &lt;unknown&gt;&#10;#15 0x561a18c5f748 &lt;unknown&gt;&#10;#16 0x561a18c5f917 &lt;unknown&gt;&#10;#17 0x561a18c70773 &lt;unknown&gt;&#10;#18 0x7fc3bbc5d044 &lt;unknown&gt;">self = &lt;test_qa_federation.TestMIPQAFederation object at 0x7fdf20ecfeb0&gt;
+
+    def test_data(self):
+        """Integration tests (data) of the MIP QA Federation."""
+&gt;       super().test_data()
+
+test_qa_federation.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+basetest.py:88: in test_data
+    default_synth_mh_wk3 = selenium_driver.find_element(
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py:739: in find_element
+    return self.execute(Command.FIND_ELEMENT, {"using": by, "value": value})["value"]
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py:345: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;selenium.webdriver.remote.errorhandler.ErrorHandler object at 0x7fdf21b2bc70&gt;
+response = {'status': 404, 'value': '{"value":{"error":"no such element","message":"no such element: Unable to locate element: {\...\\n#16 0x561a18c5f917 \\u003Cunknown&gt;\\n#17 0x561a18c70773 \\u003Cunknown&gt;\\n#18 0x7fc3bbc5d044 \\u003Cunknown&gt;\\n"}}'}
+
+    def check_response(self, response: Dict[str, Any]) -&gt; None:
+        """Checks that a JSON response from the WebDriver does not have an
+        error.
+    
+        :Args:
+         - response - The JSON response from the WebDriver server as a dictionary
+           object.
+    
+        :Raises: If the response contains an error message.
+        """
+        status = response.get("status", None)
+        if not status or status == ErrorCode.SUCCESS:
+            return
+        value = None
+        message = response.get("message", "")
+        screen: str = response.get("screen", "")
+        stacktrace = None
+        if isinstance(status, int):
+            value_json = response.get("value", None)
+            if value_json and isinstance(value_json, str):
+                import json
+    
+                try:
+                    value = json.loads(value_json)
+                    if len(value) == 1:
+                        value = value["value"]
+                    status = value.get("error", None)
+                    if not status:
+                        status = value.get("status", ErrorCode.UNKNOWN_ERROR)
+                        message = value.get("value") or value.get("message")
+                        if not isinstance(message, str):
+                            value = message
+                            message = message.get("message")
+                    else:
+                        message = value.get("message", None)
+                except ValueError:
+                    pass
+    
+        exception_class: Type[WebDriverException]
+        e = ErrorCode()
+        error_codes = [item for item in dir(e) if not item.startswith("__")]
+        for error_code in error_codes:
+            error_info = getattr(ErrorCode, error_code)
+            if isinstance(error_info, list) and status in error_info:
+                exception_class = getattr(ExceptionMapping, error_code, WebDriverException)
+                break
+        else:
+            exception_class = WebDriverException
+    
+        if not value:
+            value = response["value"]
+        if isinstance(value, str):
+            raise exception_class(value)
+        if message == "" and "message" in value:
+            message = value["message"]
+    
+        screen = None  # type: ignore[assignment]
+        if "screen" in value:
+            screen = value["screen"]
+    
+        stacktrace = None
+        st_value = value.get("stackTrace") or value.get("stacktrace")
+        if st_value:
+            if isinstance(st_value, str):
+                stacktrace = st_value.split("\n")
+            else:
+                stacktrace = []
+                try:
+                    for frame in st_value:
+                        line = frame.get("lineNumber", "")
+                        file = frame.get("fileName", "&lt;anonymous&gt;")
+                        if line:
+                            file = f"{file}:{line}"
+                        meth = frame.get("methodName", "&lt;anonymous&gt;")
+                        if "className" in frame:
+                            meth = f"{frame['className']}.{meth}"
+                        msg = "    at %s (%s)"
+                        msg = msg % (meth, file)
+                        stacktrace.append(msg)
+                except TypeError:
+                    pass
+        if exception_class == UnexpectedAlertPresentException:
+            alert_text = None
+            if "data" in value:
+                alert_text = value["data"].get("text")
+            elif "alert" in value:
+                alert_text = value["alert"].get("text")
+            raise exception_class(message, screen, stacktrace, alert_text)  # type: ignore[call-arg]  # mypy is not smart enough here
+&gt;       raise exception_class(message, screen, stacktrace)
+E       selenium.common.exceptions.NoSuchElementException: Message: no such element: Unable to locate element: {"method":"css selector","selector":"#default-synth_mh_wk3"}
+E         (Session info: headless chrome=119.0.6045.159); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+E       Stacktrace:
+E       #0 0x561a18c715e3 &lt;unknown&gt;
+E       #1 0x561a189340b7 &lt;unknown&gt;
+E       #2 0x561a18981f53 &lt;unknown&gt;
+E       #3 0x561a18982051 &lt;unknown&gt;
+E       #4 0x561a189c79c4 &lt;unknown&gt;
+E       #5 0x561a189a8f1d &lt;unknown&gt;
+E       #6 0x561a189c4b3d &lt;unknown&gt;
+E       #7 0x561a189a8cc3 &lt;unknown&gt;
+E       #8 0x561a189740e4 &lt;unknown&gt;
+E       #9 0x561a189750ae &lt;unknown&gt;
+E       #10 0x561a18c37ce1 &lt;unknown&gt;
+E       #11 0x561a18c3bb7e &lt;unknown&gt;
+E       #12 0x561a18c254b5 &lt;unknown&gt;
+E       #13 0x561a18c3c7d6 &lt;unknown&gt;
+E       #14 0x561a18c08dbf &lt;unknown&gt;
+E       #15 0x561a18c5f748 &lt;unknown&gt;
+E       #16 0x561a18c5f917 &lt;unknown&gt;
+E       #17 0x561a18c70773 &lt;unknown&gt;
+E       #18 0x7fc3bbc5d044 &lt;unknown&gt;
+
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/errorhandler.py:229: NoSuchElementException</failure></testcase><testcase classname="test_stroke_federation.TestStrokeMIP" name="test_login_and_accept_terms[https://stroke.hbpmip.link/]" time="27.639" /><testcase classname="test_stroke_federation.TestStrokeMIP" name="test_data[https://stroke.hbpmip.link/]" time="27.109" /></testsuite></testsuites>
