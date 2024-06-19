@@ -1,0 +1,853 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="6" failures="0" skipped="0" tests="6" time="406.226" timestamp="2024-06-19T07:00:14.779816" hostname="8f0a2b11c1ca"><testcase classname="test_public_mip.TestPublicMIP" name="test_login_and_accept_terms[https://hbpmip.link/]" time="135.702"><error message="failed on setup with &quot;selenium.common.exceptions.WebDriverException: Message: unknown error: net::ERR_CONNECTION_TIMED_OUT&#10;  (Session info: chrome-headless-shell=126.0.6478.61)&#10;Stacktrace:&#10;#0 0x55dec18f470a &lt;unknown&gt;&#10;#1 0x55dec15d70dc &lt;unknown&gt;&#10;#2 0x55dec15cec70 &lt;unknown&gt;&#10;#3 0x55dec15be772 &lt;unknown&gt;&#10;#4 0x55dec15bfdf2 &lt;unknown&gt;&#10;#5 0x55dec15bea2d &lt;unknown&gt;&#10;#6 0x55dec15be143 &lt;unknown&gt;&#10;#7 0x55dec15be035 &lt;unknown&gt;&#10;#8 0x55dec15bbf76 &lt;unknown&gt;&#10;#9 0x55dec15bc47a &lt;unknown&gt;&#10;#10 0x55dec15d9b27 &lt;unknown&gt;&#10;#11 0x55dec16661f5 &lt;unknown&gt;&#10;#12 0x55dec1646872 &lt;unknown&gt;&#10;#13 0x55dec16655c3 &lt;unknown&gt;&#10;#14 0x55dec1646613 &lt;unknown&gt;&#10;#15 0x55dec16164f7 &lt;unknown&gt;&#10;#16 0x55dec1616e4e &lt;unknown&gt;&#10;#17 0x55dec18ba8db &lt;unknown&gt;&#10;#18 0x55dec18be981 &lt;unknown&gt;&#10;#19 0x55dec18a63ce &lt;unknown&gt;&#10;#20 0x55dec18bf4e2 &lt;unknown&gt;&#10;#21 0x55dec188ad2f &lt;unknown&gt;&#10;#22 0x55dec18e4108 &lt;unknown&gt;&#10;#23 0x55dec18e42e0 &lt;unknown&gt;&#10;#24 0x55dec18f383c &lt;unknown&gt;&#10;#25 0x7f3989d29134 &lt;unknown&gt;&quot;">request = &lt;SubRequest 'selenium_driver' for &lt;Function test_login_and_accept_terms[https://hbpmip.link/]&gt;&gt;
+
+    @pytest.fixture(scope="class")
+    def selenium_driver(request):
+        """Set up selenium chrome webdriver fixture."""
+        _driver = webdriver.Chrome(
+            service=Service(ChromeDriverManager().install()), options=set_chrome_options()
+        )
+        _driver.maximize_window()
+        _driver.implicitly_wait(20)
+&gt;       _driver.get(request.param)
+
+conftest.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py:354: in get
+    self.execute(Command.GET, {"url": url})
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py:345: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;selenium.webdriver.remote.errorhandler.ErrorHandler object at 0x7fc9dd262880&gt;
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"unknown error: net::ERR_CONNECTION_TIMED_OUT\\n...\\n#23 0x55dec18e42e0 \\u003Cunknown&gt;\\n#24 0x55dec18f383c \\u003Cunknown&gt;\\n#25 0x7f3989d29134 \\u003Cunknown&gt;\\n"}}'}
+
+    def check_response(self, response: Dict[str, Any]) -&gt; None:
+        """Checks that a JSON response from the WebDriver does not have an
+        error.
+    
+        :Args:
+         - response - The JSON response from the WebDriver server as a dictionary
+           object.
+    
+        :Raises: If the response contains an error message.
+        """
+        status = response.get("status", None)
+        if not status or status == ErrorCode.SUCCESS:
+            return
+        value = None
+        message = response.get("message", "")
+        screen: str = response.get("screen", "")
+        stacktrace = None
+        if isinstance(status, int):
+            value_json = response.get("value", None)
+            if value_json and isinstance(value_json, str):
+                import json
+    
+                try:
+                    value = json.loads(value_json)
+                    if len(value) == 1:
+                        value = value["value"]
+                    status = value.get("error", None)
+                    if not status:
+                        status = value.get("status", ErrorCode.UNKNOWN_ERROR)
+                        message = value.get("value") or value.get("message")
+                        if not isinstance(message, str):
+                            value = message
+                            message = message.get("message")
+                    else:
+                        message = value.get("message", None)
+                except ValueError:
+                    pass
+    
+        exception_class: Type[WebDriverException]
+        e = ErrorCode()
+        error_codes = [item for item in dir(e) if not item.startswith("__")]
+        for error_code in error_codes:
+            error_info = getattr(ErrorCode, error_code)
+            if isinstance(error_info, list) and status in error_info:
+                exception_class = getattr(ExceptionMapping, error_code, WebDriverException)
+                break
+        else:
+            exception_class = WebDriverException
+    
+        if not value:
+            value = response["value"]
+        if isinstance(value, str):
+            raise exception_class(value)
+        if message == "" and "message" in value:
+            message = value["message"]
+    
+        screen = None  # type: ignore[assignment]
+        if "screen" in value:
+            screen = value["screen"]
+    
+        stacktrace = None
+        st_value = value.get("stackTrace") or value.get("stacktrace")
+        if st_value:
+            if isinstance(st_value, str):
+                stacktrace = st_value.split("\n")
+            else:
+                stacktrace = []
+                try:
+                    for frame in st_value:
+                        line = frame.get("lineNumber", "")
+                        file = frame.get("fileName", "&lt;anonymous&gt;")
+                        if line:
+                            file = f"{file}:{line}"
+                        meth = frame.get("methodName", "&lt;anonymous&gt;")
+                        if "className" in frame:
+                            meth = f"{frame['className']}.{meth}"
+                        msg = "    at %s (%s)"
+                        msg = msg % (meth, file)
+                        stacktrace.append(msg)
+                except TypeError:
+                    pass
+        if exception_class == UnexpectedAlertPresentException:
+            alert_text = None
+            if "data" in value:
+                alert_text = value["data"].get("text")
+            elif "alert" in value:
+                alert_text = value["alert"].get("text")
+            raise exception_class(message, screen, stacktrace, alert_text)  # type: ignore[call-arg]  # mypy is not smart enough here
+&gt;       raise exception_class(message, screen, stacktrace)
+E       selenium.common.exceptions.WebDriverException: Message: unknown error: net::ERR_CONNECTION_TIMED_OUT
+E         (Session info: chrome-headless-shell=126.0.6478.61)
+E       Stacktrace:
+E       #0 0x55dec18f470a &lt;unknown&gt;
+E       #1 0x55dec15d70dc &lt;unknown&gt;
+E       #2 0x55dec15cec70 &lt;unknown&gt;
+E       #3 0x55dec15be772 &lt;unknown&gt;
+E       #4 0x55dec15bfdf2 &lt;unknown&gt;
+E       #5 0x55dec15bea2d &lt;unknown&gt;
+E       #6 0x55dec15be143 &lt;unknown&gt;
+E       #7 0x55dec15be035 &lt;unknown&gt;
+E       #8 0x55dec15bbf76 &lt;unknown&gt;
+E       #9 0x55dec15bc47a &lt;unknown&gt;
+E       #10 0x55dec15d9b27 &lt;unknown&gt;
+E       #11 0x55dec16661f5 &lt;unknown&gt;
+E       #12 0x55dec1646872 &lt;unknown&gt;
+E       #13 0x55dec16655c3 &lt;unknown&gt;
+E       #14 0x55dec1646613 &lt;unknown&gt;
+E       #15 0x55dec16164f7 &lt;unknown&gt;
+E       #16 0x55dec1616e4e &lt;unknown&gt;
+E       #17 0x55dec18ba8db &lt;unknown&gt;
+E       #18 0x55dec18be981 &lt;unknown&gt;
+E       #19 0x55dec18a63ce &lt;unknown&gt;
+E       #20 0x55dec18bf4e2 &lt;unknown&gt;
+E       #21 0x55dec188ad2f &lt;unknown&gt;
+E       #22 0x55dec18e4108 &lt;unknown&gt;
+E       #23 0x55dec18e42e0 &lt;unknown&gt;
+E       #24 0x55dec18f383c &lt;unknown&gt;
+E       #25 0x7f3989d29134 &lt;unknown&gt;
+
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/errorhandler.py:229: WebDriverException</error></testcase><testcase classname="test_public_mip.TestPublicMIP" name="test_data[https://hbpmip.link/]" time="0.001"><error message="failed on setup with &quot;selenium.common.exceptions.WebDriverException: Message: unknown error: net::ERR_CONNECTION_TIMED_OUT&#10;  (Session info: chrome-headless-shell=126.0.6478.61)&#10;Stacktrace:&#10;#0 0x55dec18f470a &lt;unknown&gt;&#10;#1 0x55dec15d70dc &lt;unknown&gt;&#10;#2 0x55dec15cec70 &lt;unknown&gt;&#10;#3 0x55dec15be772 &lt;unknown&gt;&#10;#4 0x55dec15bfdf2 &lt;unknown&gt;&#10;#5 0x55dec15bea2d &lt;unknown&gt;&#10;#6 0x55dec15be143 &lt;unknown&gt;&#10;#7 0x55dec15be035 &lt;unknown&gt;&#10;#8 0x55dec15bbf76 &lt;unknown&gt;&#10;#9 0x55dec15bc47a &lt;unknown&gt;&#10;#10 0x55dec15d9b27 &lt;unknown&gt;&#10;#11 0x55dec16661f5 &lt;unknown&gt;&#10;#12 0x55dec1646872 &lt;unknown&gt;&#10;#13 0x55dec16655c3 &lt;unknown&gt;&#10;#14 0x55dec1646613 &lt;unknown&gt;&#10;#15 0x55dec16164f7 &lt;unknown&gt;&#10;#16 0x55dec1616e4e &lt;unknown&gt;&#10;#17 0x55dec18ba8db &lt;unknown&gt;&#10;#18 0x55dec18be981 &lt;unknown&gt;&#10;#19 0x55dec18a63ce &lt;unknown&gt;&#10;#20 0x55dec18bf4e2 &lt;unknown&gt;&#10;#21 0x55dec188ad2f &lt;unknown&gt;&#10;#22 0x55dec18e4108 &lt;unknown&gt;&#10;#23 0x55dec18e42e0 &lt;unknown&gt;&#10;#24 0x55dec18f383c &lt;unknown&gt;&#10;#25 0x7f3989d29134 &lt;unknown&gt;&quot;">request = &lt;SubRequest 'selenium_driver' for &lt;Function test_login_and_accept_terms[https://hbpmip.link/]&gt;&gt;
+
+    @pytest.fixture(scope="class")
+    def selenium_driver(request):
+        """Set up selenium chrome webdriver fixture."""
+        _driver = webdriver.Chrome(
+            service=Service(ChromeDriverManager().install()), options=set_chrome_options()
+        )
+        _driver.maximize_window()
+        _driver.implicitly_wait(20)
+&gt;       _driver.get(request.param)
+
+conftest.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py:354: in get
+    self.execute(Command.GET, {"url": url})
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py:345: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;selenium.webdriver.remote.errorhandler.ErrorHandler object at 0x7fc9dd262880&gt;
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"unknown error: net::ERR_CONNECTION_TIMED_OUT\\n...\\n#23 0x55dec18e42e0 \\u003Cunknown&gt;\\n#24 0x55dec18f383c \\u003Cunknown&gt;\\n#25 0x7f3989d29134 \\u003Cunknown&gt;\\n"}}'}
+
+    def check_response(self, response: Dict[str, Any]) -&gt; None:
+        """Checks that a JSON response from the WebDriver does not have an
+        error.
+    
+        :Args:
+         - response - The JSON response from the WebDriver server as a dictionary
+           object.
+    
+        :Raises: If the response contains an error message.
+        """
+        status = response.get("status", None)
+        if not status or status == ErrorCode.SUCCESS:
+            return
+        value = None
+        message = response.get("message", "")
+        screen: str = response.get("screen", "")
+        stacktrace = None
+        if isinstance(status, int):
+            value_json = response.get("value", None)
+            if value_json and isinstance(value_json, str):
+                import json
+    
+                try:
+                    value = json.loads(value_json)
+                    if len(value) == 1:
+                        value = value["value"]
+                    status = value.get("error", None)
+                    if not status:
+                        status = value.get("status", ErrorCode.UNKNOWN_ERROR)
+                        message = value.get("value") or value.get("message")
+                        if not isinstance(message, str):
+                            value = message
+                            message = message.get("message")
+                    else:
+                        message = value.get("message", None)
+                except ValueError:
+                    pass
+    
+        exception_class: Type[WebDriverException]
+        e = ErrorCode()
+        error_codes = [item for item in dir(e) if not item.startswith("__")]
+        for error_code in error_codes:
+            error_info = getattr(ErrorCode, error_code)
+            if isinstance(error_info, list) and status in error_info:
+                exception_class = getattr(ExceptionMapping, error_code, WebDriverException)
+                break
+        else:
+            exception_class = WebDriverException
+    
+        if not value:
+            value = response["value"]
+        if isinstance(value, str):
+            raise exception_class(value)
+        if message == "" and "message" in value:
+            message = value["message"]
+    
+        screen = None  # type: ignore[assignment]
+        if "screen" in value:
+            screen = value["screen"]
+    
+        stacktrace = None
+        st_value = value.get("stackTrace") or value.get("stacktrace")
+        if st_value:
+            if isinstance(st_value, str):
+                stacktrace = st_value.split("\n")
+            else:
+                stacktrace = []
+                try:
+                    for frame in st_value:
+                        line = frame.get("lineNumber", "")
+                        file = frame.get("fileName", "&lt;anonymous&gt;")
+                        if line:
+                            file = f"{file}:{line}"
+                        meth = frame.get("methodName", "&lt;anonymous&gt;")
+                        if "className" in frame:
+                            meth = f"{frame['className']}.{meth}"
+                        msg = "    at %s (%s)"
+                        msg = msg % (meth, file)
+                        stacktrace.append(msg)
+                except TypeError:
+                    pass
+        if exception_class == UnexpectedAlertPresentException:
+            alert_text = None
+            if "data" in value:
+                alert_text = value["data"].get("text")
+            elif "alert" in value:
+                alert_text = value["alert"].get("text")
+            raise exception_class(message, screen, stacktrace, alert_text)  # type: ignore[call-arg]  # mypy is not smart enough here
+&gt;       raise exception_class(message, screen, stacktrace)
+E       selenium.common.exceptions.WebDriverException: Message: unknown error: net::ERR_CONNECTION_TIMED_OUT
+E         (Session info: chrome-headless-shell=126.0.6478.61)
+E       Stacktrace:
+E       #0 0x55dec18f470a &lt;unknown&gt;
+E       #1 0x55dec15d70dc &lt;unknown&gt;
+E       #2 0x55dec15cec70 &lt;unknown&gt;
+E       #3 0x55dec15be772 &lt;unknown&gt;
+E       #4 0x55dec15bfdf2 &lt;unknown&gt;
+E       #5 0x55dec15bea2d &lt;unknown&gt;
+E       #6 0x55dec15be143 &lt;unknown&gt;
+E       #7 0x55dec15be035 &lt;unknown&gt;
+E       #8 0x55dec15bbf76 &lt;unknown&gt;
+E       #9 0x55dec15bc47a &lt;unknown&gt;
+E       #10 0x55dec15d9b27 &lt;unknown&gt;
+E       #11 0x55dec16661f5 &lt;unknown&gt;
+E       #12 0x55dec1646872 &lt;unknown&gt;
+E       #13 0x55dec16655c3 &lt;unknown&gt;
+E       #14 0x55dec1646613 &lt;unknown&gt;
+E       #15 0x55dec16164f7 &lt;unknown&gt;
+E       #16 0x55dec1616e4e &lt;unknown&gt;
+E       #17 0x55dec18ba8db &lt;unknown&gt;
+E       #18 0x55dec18be981 &lt;unknown&gt;
+E       #19 0x55dec18a63ce &lt;unknown&gt;
+E       #20 0x55dec18bf4e2 &lt;unknown&gt;
+E       #21 0x55dec188ad2f &lt;unknown&gt;
+E       #22 0x55dec18e4108 &lt;unknown&gt;
+E       #23 0x55dec18e42e0 &lt;unknown&gt;
+E       #24 0x55dec18f383c &lt;unknown&gt;
+E       #25 0x7f3989d29134 &lt;unknown&gt;
+
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/errorhandler.py:229: WebDriverException</error></testcase><testcase classname="test_qa_federation.TestMIPQAFederation" name="test_login_and_accept_terms[https://qa.hbpmip.link/]" time="135.065"><error message="failed on setup with &quot;selenium.common.exceptions.WebDriverException: Message: unknown error: net::ERR_CONNECTION_TIMED_OUT&#10;  (Session info: chrome-headless-shell=126.0.6478.61)&#10;Stacktrace:&#10;#0 0x55e43914e70a &lt;unknown&gt;&#10;#1 0x55e438e310dc &lt;unknown&gt;&#10;#2 0x55e438e28c70 &lt;unknown&gt;&#10;#3 0x55e438e18772 &lt;unknown&gt;&#10;#4 0x55e438e19df2 &lt;unknown&gt;&#10;#5 0x55e438e18a2d &lt;unknown&gt;&#10;#6 0x55e438e18143 &lt;unknown&gt;&#10;#7 0x55e438e18035 &lt;unknown&gt;&#10;#8 0x55e438e15f76 &lt;unknown&gt;&#10;#9 0x55e438e1647a &lt;unknown&gt;&#10;#10 0x55e438e33b27 &lt;unknown&gt;&#10;#11 0x55e438ec01f5 &lt;unknown&gt;&#10;#12 0x55e438ea0872 &lt;unknown&gt;&#10;#13 0x55e438ebf5c3 &lt;unknown&gt;&#10;#14 0x55e438ea0613 &lt;unknown&gt;&#10;#15 0x55e438e704f7 &lt;unknown&gt;&#10;#16 0x55e438e70e4e &lt;unknown&gt;&#10;#17 0x55e4391148db &lt;unknown&gt;&#10;#18 0x55e439118981 &lt;unknown&gt;&#10;#19 0x55e4391003ce &lt;unknown&gt;&#10;#20 0x55e4391194e2 &lt;unknown&gt;&#10;#21 0x55e4390e4d2f &lt;unknown&gt;&#10;#22 0x55e43913e108 &lt;unknown&gt;&#10;#23 0x55e43913e2e0 &lt;unknown&gt;&#10;#24 0x55e43914d83c &lt;unknown&gt;&#10;#25 0x7ff19c588134 &lt;unknown&gt;&quot;">request = &lt;SubRequest 'selenium_driver' for &lt;Function test_login_and_accept_terms[https://qa.hbpmip.link/]&gt;&gt;
+
+    @pytest.fixture(scope="class")
+    def selenium_driver(request):
+        """Set up selenium chrome webdriver fixture."""
+        _driver = webdriver.Chrome(
+            service=Service(ChromeDriverManager().install()), options=set_chrome_options()
+        )
+        _driver.maximize_window()
+        _driver.implicitly_wait(20)
+&gt;       _driver.get(request.param)
+
+conftest.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py:354: in get
+    self.execute(Command.GET, {"url": url})
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py:345: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;selenium.webdriver.remote.errorhandler.ErrorHandler object at 0x7fc9dd2781f0&gt;
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"unknown error: net::ERR_CONNECTION_TIMED_OUT\\n...\\n#23 0x55e43913e2e0 \\u003Cunknown&gt;\\n#24 0x55e43914d83c \\u003Cunknown&gt;\\n#25 0x7ff19c588134 \\u003Cunknown&gt;\\n"}}'}
+
+    def check_response(self, response: Dict[str, Any]) -&gt; None:
+        """Checks that a JSON response from the WebDriver does not have an
+        error.
+    
+        :Args:
+         - response - The JSON response from the WebDriver server as a dictionary
+           object.
+    
+        :Raises: If the response contains an error message.
+        """
+        status = response.get("status", None)
+        if not status or status == ErrorCode.SUCCESS:
+            return
+        value = None
+        message = response.get("message", "")
+        screen: str = response.get("screen", "")
+        stacktrace = None
+        if isinstance(status, int):
+            value_json = response.get("value", None)
+            if value_json and isinstance(value_json, str):
+                import json
+    
+                try:
+                    value = json.loads(value_json)
+                    if len(value) == 1:
+                        value = value["value"]
+                    status = value.get("error", None)
+                    if not status:
+                        status = value.get("status", ErrorCode.UNKNOWN_ERROR)
+                        message = value.get("value") or value.get("message")
+                        if not isinstance(message, str):
+                            value = message
+                            message = message.get("message")
+                    else:
+                        message = value.get("message", None)
+                except ValueError:
+                    pass
+    
+        exception_class: Type[WebDriverException]
+        e = ErrorCode()
+        error_codes = [item for item in dir(e) if not item.startswith("__")]
+        for error_code in error_codes:
+            error_info = getattr(ErrorCode, error_code)
+            if isinstance(error_info, list) and status in error_info:
+                exception_class = getattr(ExceptionMapping, error_code, WebDriverException)
+                break
+        else:
+            exception_class = WebDriverException
+    
+        if not value:
+            value = response["value"]
+        if isinstance(value, str):
+            raise exception_class(value)
+        if message == "" and "message" in value:
+            message = value["message"]
+    
+        screen = None  # type: ignore[assignment]
+        if "screen" in value:
+            screen = value["screen"]
+    
+        stacktrace = None
+        st_value = value.get("stackTrace") or value.get("stacktrace")
+        if st_value:
+            if isinstance(st_value, str):
+                stacktrace = st_value.split("\n")
+            else:
+                stacktrace = []
+                try:
+                    for frame in st_value:
+                        line = frame.get("lineNumber", "")
+                        file = frame.get("fileName", "&lt;anonymous&gt;")
+                        if line:
+                            file = f"{file}:{line}"
+                        meth = frame.get("methodName", "&lt;anonymous&gt;")
+                        if "className" in frame:
+                            meth = f"{frame['className']}.{meth}"
+                        msg = "    at %s (%s)"
+                        msg = msg % (meth, file)
+                        stacktrace.append(msg)
+                except TypeError:
+                    pass
+        if exception_class == UnexpectedAlertPresentException:
+            alert_text = None
+            if "data" in value:
+                alert_text = value["data"].get("text")
+            elif "alert" in value:
+                alert_text = value["alert"].get("text")
+            raise exception_class(message, screen, stacktrace, alert_text)  # type: ignore[call-arg]  # mypy is not smart enough here
+&gt;       raise exception_class(message, screen, stacktrace)
+E       selenium.common.exceptions.WebDriverException: Message: unknown error: net::ERR_CONNECTION_TIMED_OUT
+E         (Session info: chrome-headless-shell=126.0.6478.61)
+E       Stacktrace:
+E       #0 0x55e43914e70a &lt;unknown&gt;
+E       #1 0x55e438e310dc &lt;unknown&gt;
+E       #2 0x55e438e28c70 &lt;unknown&gt;
+E       #3 0x55e438e18772 &lt;unknown&gt;
+E       #4 0x55e438e19df2 &lt;unknown&gt;
+E       #5 0x55e438e18a2d &lt;unknown&gt;
+E       #6 0x55e438e18143 &lt;unknown&gt;
+E       #7 0x55e438e18035 &lt;unknown&gt;
+E       #8 0x55e438e15f76 &lt;unknown&gt;
+E       #9 0x55e438e1647a &lt;unknown&gt;
+E       #10 0x55e438e33b27 &lt;unknown&gt;
+E       #11 0x55e438ec01f5 &lt;unknown&gt;
+E       #12 0x55e438ea0872 &lt;unknown&gt;
+E       #13 0x55e438ebf5c3 &lt;unknown&gt;
+E       #14 0x55e438ea0613 &lt;unknown&gt;
+E       #15 0x55e438e704f7 &lt;unknown&gt;
+E       #16 0x55e438e70e4e &lt;unknown&gt;
+E       #17 0x55e4391148db &lt;unknown&gt;
+E       #18 0x55e439118981 &lt;unknown&gt;
+E       #19 0x55e4391003ce &lt;unknown&gt;
+E       #20 0x55e4391194e2 &lt;unknown&gt;
+E       #21 0x55e4390e4d2f &lt;unknown&gt;
+E       #22 0x55e43913e108 &lt;unknown&gt;
+E       #23 0x55e43913e2e0 &lt;unknown&gt;
+E       #24 0x55e43914d83c &lt;unknown&gt;
+E       #25 0x7ff19c588134 &lt;unknown&gt;
+
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/errorhandler.py:229: WebDriverException</error></testcase><testcase classname="test_qa_federation.TestMIPQAFederation" name="test_data[https://qa.hbpmip.link/]" time="0.001"><error message="failed on setup with &quot;selenium.common.exceptions.WebDriverException: Message: unknown error: net::ERR_CONNECTION_TIMED_OUT&#10;  (Session info: chrome-headless-shell=126.0.6478.61)&#10;Stacktrace:&#10;#0 0x55e43914e70a &lt;unknown&gt;&#10;#1 0x55e438e310dc &lt;unknown&gt;&#10;#2 0x55e438e28c70 &lt;unknown&gt;&#10;#3 0x55e438e18772 &lt;unknown&gt;&#10;#4 0x55e438e19df2 &lt;unknown&gt;&#10;#5 0x55e438e18a2d &lt;unknown&gt;&#10;#6 0x55e438e18143 &lt;unknown&gt;&#10;#7 0x55e438e18035 &lt;unknown&gt;&#10;#8 0x55e438e15f76 &lt;unknown&gt;&#10;#9 0x55e438e1647a &lt;unknown&gt;&#10;#10 0x55e438e33b27 &lt;unknown&gt;&#10;#11 0x55e438ec01f5 &lt;unknown&gt;&#10;#12 0x55e438ea0872 &lt;unknown&gt;&#10;#13 0x55e438ebf5c3 &lt;unknown&gt;&#10;#14 0x55e438ea0613 &lt;unknown&gt;&#10;#15 0x55e438e704f7 &lt;unknown&gt;&#10;#16 0x55e438e70e4e &lt;unknown&gt;&#10;#17 0x55e4391148db &lt;unknown&gt;&#10;#18 0x55e439118981 &lt;unknown&gt;&#10;#19 0x55e4391003ce &lt;unknown&gt;&#10;#20 0x55e4391194e2 &lt;unknown&gt;&#10;#21 0x55e4390e4d2f &lt;unknown&gt;&#10;#22 0x55e43913e108 &lt;unknown&gt;&#10;#23 0x55e43913e2e0 &lt;unknown&gt;&#10;#24 0x55e43914d83c &lt;unknown&gt;&#10;#25 0x7ff19c588134 &lt;unknown&gt;&quot;">request = &lt;SubRequest 'selenium_driver' for &lt;Function test_login_and_accept_terms[https://qa.hbpmip.link/]&gt;&gt;
+
+    @pytest.fixture(scope="class")
+    def selenium_driver(request):
+        """Set up selenium chrome webdriver fixture."""
+        _driver = webdriver.Chrome(
+            service=Service(ChromeDriverManager().install()), options=set_chrome_options()
+        )
+        _driver.maximize_window()
+        _driver.implicitly_wait(20)
+&gt;       _driver.get(request.param)
+
+conftest.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py:354: in get
+    self.execute(Command.GET, {"url": url})
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py:345: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;selenium.webdriver.remote.errorhandler.ErrorHandler object at 0x7fc9dd2781f0&gt;
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"unknown error: net::ERR_CONNECTION_TIMED_OUT\\n...\\n#23 0x55e43913e2e0 \\u003Cunknown&gt;\\n#24 0x55e43914d83c \\u003Cunknown&gt;\\n#25 0x7ff19c588134 \\u003Cunknown&gt;\\n"}}'}
+
+    def check_response(self, response: Dict[str, Any]) -&gt; None:
+        """Checks that a JSON response from the WebDriver does not have an
+        error.
+    
+        :Args:
+         - response - The JSON response from the WebDriver server as a dictionary
+           object.
+    
+        :Raises: If the response contains an error message.
+        """
+        status = response.get("status", None)
+        if not status or status == ErrorCode.SUCCESS:
+            return
+        value = None
+        message = response.get("message", "")
+        screen: str = response.get("screen", "")
+        stacktrace = None
+        if isinstance(status, int):
+            value_json = response.get("value", None)
+            if value_json and isinstance(value_json, str):
+                import json
+    
+                try:
+                    value = json.loads(value_json)
+                    if len(value) == 1:
+                        value = value["value"]
+                    status = value.get("error", None)
+                    if not status:
+                        status = value.get("status", ErrorCode.UNKNOWN_ERROR)
+                        message = value.get("value") or value.get("message")
+                        if not isinstance(message, str):
+                            value = message
+                            message = message.get("message")
+                    else:
+                        message = value.get("message", None)
+                except ValueError:
+                    pass
+    
+        exception_class: Type[WebDriverException]
+        e = ErrorCode()
+        error_codes = [item for item in dir(e) if not item.startswith("__")]
+        for error_code in error_codes:
+            error_info = getattr(ErrorCode, error_code)
+            if isinstance(error_info, list) and status in error_info:
+                exception_class = getattr(ExceptionMapping, error_code, WebDriverException)
+                break
+        else:
+            exception_class = WebDriverException
+    
+        if not value:
+            value = response["value"]
+        if isinstance(value, str):
+            raise exception_class(value)
+        if message == "" and "message" in value:
+            message = value["message"]
+    
+        screen = None  # type: ignore[assignment]
+        if "screen" in value:
+            screen = value["screen"]
+    
+        stacktrace = None
+        st_value = value.get("stackTrace") or value.get("stacktrace")
+        if st_value:
+            if isinstance(st_value, str):
+                stacktrace = st_value.split("\n")
+            else:
+                stacktrace = []
+                try:
+                    for frame in st_value:
+                        line = frame.get("lineNumber", "")
+                        file = frame.get("fileName", "&lt;anonymous&gt;")
+                        if line:
+                            file = f"{file}:{line}"
+                        meth = frame.get("methodName", "&lt;anonymous&gt;")
+                        if "className" in frame:
+                            meth = f"{frame['className']}.{meth}"
+                        msg = "    at %s (%s)"
+                        msg = msg % (meth, file)
+                        stacktrace.append(msg)
+                except TypeError:
+                    pass
+        if exception_class == UnexpectedAlertPresentException:
+            alert_text = None
+            if "data" in value:
+                alert_text = value["data"].get("text")
+            elif "alert" in value:
+                alert_text = value["alert"].get("text")
+            raise exception_class(message, screen, stacktrace, alert_text)  # type: ignore[call-arg]  # mypy is not smart enough here
+&gt;       raise exception_class(message, screen, stacktrace)
+E       selenium.common.exceptions.WebDriverException: Message: unknown error: net::ERR_CONNECTION_TIMED_OUT
+E         (Session info: chrome-headless-shell=126.0.6478.61)
+E       Stacktrace:
+E       #0 0x55e43914e70a &lt;unknown&gt;
+E       #1 0x55e438e310dc &lt;unknown&gt;
+E       #2 0x55e438e28c70 &lt;unknown&gt;
+E       #3 0x55e438e18772 &lt;unknown&gt;
+E       #4 0x55e438e19df2 &lt;unknown&gt;
+E       #5 0x55e438e18a2d &lt;unknown&gt;
+E       #6 0x55e438e18143 &lt;unknown&gt;
+E       #7 0x55e438e18035 &lt;unknown&gt;
+E       #8 0x55e438e15f76 &lt;unknown&gt;
+E       #9 0x55e438e1647a &lt;unknown&gt;
+E       #10 0x55e438e33b27 &lt;unknown&gt;
+E       #11 0x55e438ec01f5 &lt;unknown&gt;
+E       #12 0x55e438ea0872 &lt;unknown&gt;
+E       #13 0x55e438ebf5c3 &lt;unknown&gt;
+E       #14 0x55e438ea0613 &lt;unknown&gt;
+E       #15 0x55e438e704f7 &lt;unknown&gt;
+E       #16 0x55e438e70e4e &lt;unknown&gt;
+E       #17 0x55e4391148db &lt;unknown&gt;
+E       #18 0x55e439118981 &lt;unknown&gt;
+E       #19 0x55e4391003ce &lt;unknown&gt;
+E       #20 0x55e4391194e2 &lt;unknown&gt;
+E       #21 0x55e4390e4d2f &lt;unknown&gt;
+E       #22 0x55e43913e108 &lt;unknown&gt;
+E       #23 0x55e43913e2e0 &lt;unknown&gt;
+E       #24 0x55e43914d83c &lt;unknown&gt;
+E       #25 0x7ff19c588134 &lt;unknown&gt;
+
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/errorhandler.py:229: WebDriverException</error></testcase><testcase classname="test_stroke_federation.TestStrokeMIP" name="test_login_and_accept_terms[https://stroke.hbpmip.link/]" time="135.117"><error message="failed on setup with &quot;selenium.common.exceptions.WebDriverException: Message: unknown error: net::ERR_CONNECTION_TIMED_OUT&#10;  (Session info: chrome-headless-shell=126.0.6478.61)&#10;Stacktrace:&#10;#0 0x56511dc2d70a &lt;unknown&gt;&#10;#1 0x56511d9100dc &lt;unknown&gt;&#10;#2 0x56511d907c70 &lt;unknown&gt;&#10;#3 0x56511d8f7772 &lt;unknown&gt;&#10;#4 0x56511d8f8df2 &lt;unknown&gt;&#10;#5 0x56511d8f7a2d &lt;unknown&gt;&#10;#6 0x56511d8f7143 &lt;unknown&gt;&#10;#7 0x56511d8f7035 &lt;unknown&gt;&#10;#8 0x56511d8f4f76 &lt;unknown&gt;&#10;#9 0x56511d8f547a &lt;unknown&gt;&#10;#10 0x56511d912b27 &lt;unknown&gt;&#10;#11 0x56511d99f1f5 &lt;unknown&gt;&#10;#12 0x56511d97f872 &lt;unknown&gt;&#10;#13 0x56511d99e5c3 &lt;unknown&gt;&#10;#14 0x56511d97f613 &lt;unknown&gt;&#10;#15 0x56511d94f4f7 &lt;unknown&gt;&#10;#16 0x56511d94fe4e &lt;unknown&gt;&#10;#17 0x56511dbf38db &lt;unknown&gt;&#10;#18 0x56511dbf7981 &lt;unknown&gt;&#10;#19 0x56511dbdf3ce &lt;unknown&gt;&#10;#20 0x56511dbf84e2 &lt;unknown&gt;&#10;#21 0x56511dbc3d2f &lt;unknown&gt;&#10;#22 0x56511dc1d108 &lt;unknown&gt;&#10;#23 0x56511dc1d2e0 &lt;unknown&gt;&#10;#24 0x56511dc2c83c &lt;unknown&gt;&#10;#25 0x7f42525e1134 &lt;unknown&gt;&quot;">request = &lt;SubRequest 'selenium_driver' for &lt;Function test_login_and_accept_terms[https://stroke.hbpmip.link/]&gt;&gt;
+
+    @pytest.fixture(scope="class")
+    def selenium_driver(request):
+        """Set up selenium chrome webdriver fixture."""
+        _driver = webdriver.Chrome(
+            service=Service(ChromeDriverManager().install()), options=set_chrome_options()
+        )
+        _driver.maximize_window()
+        _driver.implicitly_wait(20)
+&gt;       _driver.get(request.param)
+
+conftest.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py:354: in get
+    self.execute(Command.GET, {"url": url})
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py:345: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;selenium.webdriver.remote.errorhandler.ErrorHandler object at 0x7fc9dc490610&gt;
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"unknown error: net::ERR_CONNECTION_TIMED_OUT\\n...\\n#23 0x56511dc1d2e0 \\u003Cunknown&gt;\\n#24 0x56511dc2c83c \\u003Cunknown&gt;\\n#25 0x7f42525e1134 \\u003Cunknown&gt;\\n"}}'}
+
+    def check_response(self, response: Dict[str, Any]) -&gt; None:
+        """Checks that a JSON response from the WebDriver does not have an
+        error.
+    
+        :Args:
+         - response - The JSON response from the WebDriver server as a dictionary
+           object.
+    
+        :Raises: If the response contains an error message.
+        """
+        status = response.get("status", None)
+        if not status or status == ErrorCode.SUCCESS:
+            return
+        value = None
+        message = response.get("message", "")
+        screen: str = response.get("screen", "")
+        stacktrace = None
+        if isinstance(status, int):
+            value_json = response.get("value", None)
+            if value_json and isinstance(value_json, str):
+                import json
+    
+                try:
+                    value = json.loads(value_json)
+                    if len(value) == 1:
+                        value = value["value"]
+                    status = value.get("error", None)
+                    if not status:
+                        status = value.get("status", ErrorCode.UNKNOWN_ERROR)
+                        message = value.get("value") or value.get("message")
+                        if not isinstance(message, str):
+                            value = message
+                            message = message.get("message")
+                    else:
+                        message = value.get("message", None)
+                except ValueError:
+                    pass
+    
+        exception_class: Type[WebDriverException]
+        e = ErrorCode()
+        error_codes = [item for item in dir(e) if not item.startswith("__")]
+        for error_code in error_codes:
+            error_info = getattr(ErrorCode, error_code)
+            if isinstance(error_info, list) and status in error_info:
+                exception_class = getattr(ExceptionMapping, error_code, WebDriverException)
+                break
+        else:
+            exception_class = WebDriverException
+    
+        if not value:
+            value = response["value"]
+        if isinstance(value, str):
+            raise exception_class(value)
+        if message == "" and "message" in value:
+            message = value["message"]
+    
+        screen = None  # type: ignore[assignment]
+        if "screen" in value:
+            screen = value["screen"]
+    
+        stacktrace = None
+        st_value = value.get("stackTrace") or value.get("stacktrace")
+        if st_value:
+            if isinstance(st_value, str):
+                stacktrace = st_value.split("\n")
+            else:
+                stacktrace = []
+                try:
+                    for frame in st_value:
+                        line = frame.get("lineNumber", "")
+                        file = frame.get("fileName", "&lt;anonymous&gt;")
+                        if line:
+                            file = f"{file}:{line}"
+                        meth = frame.get("methodName", "&lt;anonymous&gt;")
+                        if "className" in frame:
+                            meth = f"{frame['className']}.{meth}"
+                        msg = "    at %s (%s)"
+                        msg = msg % (meth, file)
+                        stacktrace.append(msg)
+                except TypeError:
+                    pass
+        if exception_class == UnexpectedAlertPresentException:
+            alert_text = None
+            if "data" in value:
+                alert_text = value["data"].get("text")
+            elif "alert" in value:
+                alert_text = value["alert"].get("text")
+            raise exception_class(message, screen, stacktrace, alert_text)  # type: ignore[call-arg]  # mypy is not smart enough here
+&gt;       raise exception_class(message, screen, stacktrace)
+E       selenium.common.exceptions.WebDriverException: Message: unknown error: net::ERR_CONNECTION_TIMED_OUT
+E         (Session info: chrome-headless-shell=126.0.6478.61)
+E       Stacktrace:
+E       #0 0x56511dc2d70a &lt;unknown&gt;
+E       #1 0x56511d9100dc &lt;unknown&gt;
+E       #2 0x56511d907c70 &lt;unknown&gt;
+E       #3 0x56511d8f7772 &lt;unknown&gt;
+E       #4 0x56511d8f8df2 &lt;unknown&gt;
+E       #5 0x56511d8f7a2d &lt;unknown&gt;
+E       #6 0x56511d8f7143 &lt;unknown&gt;
+E       #7 0x56511d8f7035 &lt;unknown&gt;
+E       #8 0x56511d8f4f76 &lt;unknown&gt;
+E       #9 0x56511d8f547a &lt;unknown&gt;
+E       #10 0x56511d912b27 &lt;unknown&gt;
+E       #11 0x56511d99f1f5 &lt;unknown&gt;
+E       #12 0x56511d97f872 &lt;unknown&gt;
+E       #13 0x56511d99e5c3 &lt;unknown&gt;
+E       #14 0x56511d97f613 &lt;unknown&gt;
+E       #15 0x56511d94f4f7 &lt;unknown&gt;
+E       #16 0x56511d94fe4e &lt;unknown&gt;
+E       #17 0x56511dbf38db &lt;unknown&gt;
+E       #18 0x56511dbf7981 &lt;unknown&gt;
+E       #19 0x56511dbdf3ce &lt;unknown&gt;
+E       #20 0x56511dbf84e2 &lt;unknown&gt;
+E       #21 0x56511dbc3d2f &lt;unknown&gt;
+E       #22 0x56511dc1d108 &lt;unknown&gt;
+E       #23 0x56511dc1d2e0 &lt;unknown&gt;
+E       #24 0x56511dc2c83c &lt;unknown&gt;
+E       #25 0x7f42525e1134 &lt;unknown&gt;
+
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/errorhandler.py:229: WebDriverException</error></testcase><testcase classname="test_stroke_federation.TestStrokeMIP" name="test_data[https://stroke.hbpmip.link/]" time="0.001"><error message="failed on setup with &quot;selenium.common.exceptions.WebDriverException: Message: unknown error: net::ERR_CONNECTION_TIMED_OUT&#10;  (Session info: chrome-headless-shell=126.0.6478.61)&#10;Stacktrace:&#10;#0 0x56511dc2d70a &lt;unknown&gt;&#10;#1 0x56511d9100dc &lt;unknown&gt;&#10;#2 0x56511d907c70 &lt;unknown&gt;&#10;#3 0x56511d8f7772 &lt;unknown&gt;&#10;#4 0x56511d8f8df2 &lt;unknown&gt;&#10;#5 0x56511d8f7a2d &lt;unknown&gt;&#10;#6 0x56511d8f7143 &lt;unknown&gt;&#10;#7 0x56511d8f7035 &lt;unknown&gt;&#10;#8 0x56511d8f4f76 &lt;unknown&gt;&#10;#9 0x56511d8f547a &lt;unknown&gt;&#10;#10 0x56511d912b27 &lt;unknown&gt;&#10;#11 0x56511d99f1f5 &lt;unknown&gt;&#10;#12 0x56511d97f872 &lt;unknown&gt;&#10;#13 0x56511d99e5c3 &lt;unknown&gt;&#10;#14 0x56511d97f613 &lt;unknown&gt;&#10;#15 0x56511d94f4f7 &lt;unknown&gt;&#10;#16 0x56511d94fe4e &lt;unknown&gt;&#10;#17 0x56511dbf38db &lt;unknown&gt;&#10;#18 0x56511dbf7981 &lt;unknown&gt;&#10;#19 0x56511dbdf3ce &lt;unknown&gt;&#10;#20 0x56511dbf84e2 &lt;unknown&gt;&#10;#21 0x56511dbc3d2f &lt;unknown&gt;&#10;#22 0x56511dc1d108 &lt;unknown&gt;&#10;#23 0x56511dc1d2e0 &lt;unknown&gt;&#10;#24 0x56511dc2c83c &lt;unknown&gt;&#10;#25 0x7f42525e1134 &lt;unknown&gt;&quot;">request = &lt;SubRequest 'selenium_driver' for &lt;Function test_login_and_accept_terms[https://stroke.hbpmip.link/]&gt;&gt;
+
+    @pytest.fixture(scope="class")
+    def selenium_driver(request):
+        """Set up selenium chrome webdriver fixture."""
+        _driver = webdriver.Chrome(
+            service=Service(ChromeDriverManager().install()), options=set_chrome_options()
+        )
+        _driver.maximize_window()
+        _driver.implicitly_wait(20)
+&gt;       _driver.get(request.param)
+
+conftest.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py:354: in get
+    self.execute(Command.GET, {"url": url})
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py:345: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;selenium.webdriver.remote.errorhandler.ErrorHandler object at 0x7fc9dc490610&gt;
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"unknown error: net::ERR_CONNECTION_TIMED_OUT\\n...\\n#23 0x56511dc1d2e0 \\u003Cunknown&gt;\\n#24 0x56511dc2c83c \\u003Cunknown&gt;\\n#25 0x7f42525e1134 \\u003Cunknown&gt;\\n"}}'}
+
+    def check_response(self, response: Dict[str, Any]) -&gt; None:
+        """Checks that a JSON response from the WebDriver does not have an
+        error.
+    
+        :Args:
+         - response - The JSON response from the WebDriver server as a dictionary
+           object.
+    
+        :Raises: If the response contains an error message.
+        """
+        status = response.get("status", None)
+        if not status or status == ErrorCode.SUCCESS:
+            return
+        value = None
+        message = response.get("message", "")
+        screen: str = response.get("screen", "")
+        stacktrace = None
+        if isinstance(status, int):
+            value_json = response.get("value", None)
+            if value_json and isinstance(value_json, str):
+                import json
+    
+                try:
+                    value = json.loads(value_json)
+                    if len(value) == 1:
+                        value = value["value"]
+                    status = value.get("error", None)
+                    if not status:
+                        status = value.get("status", ErrorCode.UNKNOWN_ERROR)
+                        message = value.get("value") or value.get("message")
+                        if not isinstance(message, str):
+                            value = message
+                            message = message.get("message")
+                    else:
+                        message = value.get("message", None)
+                except ValueError:
+                    pass
+    
+        exception_class: Type[WebDriverException]
+        e = ErrorCode()
+        error_codes = [item for item in dir(e) if not item.startswith("__")]
+        for error_code in error_codes:
+            error_info = getattr(ErrorCode, error_code)
+            if isinstance(error_info, list) and status in error_info:
+                exception_class = getattr(ExceptionMapping, error_code, WebDriverException)
+                break
+        else:
+            exception_class = WebDriverException
+    
+        if not value:
+            value = response["value"]
+        if isinstance(value, str):
+            raise exception_class(value)
+        if message == "" and "message" in value:
+            message = value["message"]
+    
+        screen = None  # type: ignore[assignment]
+        if "screen" in value:
+            screen = value["screen"]
+    
+        stacktrace = None
+        st_value = value.get("stackTrace") or value.get("stacktrace")
+        if st_value:
+            if isinstance(st_value, str):
+                stacktrace = st_value.split("\n")
+            else:
+                stacktrace = []
+                try:
+                    for frame in st_value:
+                        line = frame.get("lineNumber", "")
+                        file = frame.get("fileName", "&lt;anonymous&gt;")
+                        if line:
+                            file = f"{file}:{line}"
+                        meth = frame.get("methodName", "&lt;anonymous&gt;")
+                        if "className" in frame:
+                            meth = f"{frame['className']}.{meth}"
+                        msg = "    at %s (%s)"
+                        msg = msg % (meth, file)
+                        stacktrace.append(msg)
+                except TypeError:
+                    pass
+        if exception_class == UnexpectedAlertPresentException:
+            alert_text = None
+            if "data" in value:
+                alert_text = value["data"].get("text")
+            elif "alert" in value:
+                alert_text = value["alert"].get("text")
+            raise exception_class(message, screen, stacktrace, alert_text)  # type: ignore[call-arg]  # mypy is not smart enough here
+&gt;       raise exception_class(message, screen, stacktrace)
+E       selenium.common.exceptions.WebDriverException: Message: unknown error: net::ERR_CONNECTION_TIMED_OUT
+E         (Session info: chrome-headless-shell=126.0.6478.61)
+E       Stacktrace:
+E       #0 0x56511dc2d70a &lt;unknown&gt;
+E       #1 0x56511d9100dc &lt;unknown&gt;
+E       #2 0x56511d907c70 &lt;unknown&gt;
+E       #3 0x56511d8f7772 &lt;unknown&gt;
+E       #4 0x56511d8f8df2 &lt;unknown&gt;
+E       #5 0x56511d8f7a2d &lt;unknown&gt;
+E       #6 0x56511d8f7143 &lt;unknown&gt;
+E       #7 0x56511d8f7035 &lt;unknown&gt;
+E       #8 0x56511d8f4f76 &lt;unknown&gt;
+E       #9 0x56511d8f547a &lt;unknown&gt;
+E       #10 0x56511d912b27 &lt;unknown&gt;
+E       #11 0x56511d99f1f5 &lt;unknown&gt;
+E       #12 0x56511d97f872 &lt;unknown&gt;
+E       #13 0x56511d99e5c3 &lt;unknown&gt;
+E       #14 0x56511d97f613 &lt;unknown&gt;
+E       #15 0x56511d94f4f7 &lt;unknown&gt;
+E       #16 0x56511d94fe4e &lt;unknown&gt;
+E       #17 0x56511dbf38db &lt;unknown&gt;
+E       #18 0x56511dbf7981 &lt;unknown&gt;
+E       #19 0x56511dbdf3ce &lt;unknown&gt;
+E       #20 0x56511dbf84e2 &lt;unknown&gt;
+E       #21 0x56511dbc3d2f &lt;unknown&gt;
+E       #22 0x56511dc1d108 &lt;unknown&gt;
+E       #23 0x56511dc1d2e0 &lt;unknown&gt;
+E       #24 0x56511dc2c83c &lt;unknown&gt;
+E       #25 0x7f42525e1134 &lt;unknown&gt;
+
+/usr/local/lib/python3.9/site-packages/selenium/webdriver/remote/errorhandler.py:229: WebDriverException</error></testcase></testsuite></testsuites>
